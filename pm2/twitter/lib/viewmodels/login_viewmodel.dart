@@ -60,33 +60,33 @@ class LoginBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    // TODO: implement mapEventToState
     try {
       // Call model
       yield Authenticated(message: "User Authenticated");
-    } catch (e) {}
-    yield Error(message: "Error");
+    } catch (e) {
+      yield Error(message: "Error");
+    }
   }
 }
 
-class LoginViewModel extends StatefulWidget {
-  final String handle = "";
-  final String password = "";
+// class LoginViewModel extends StatefulWidget {
+//   final String handle = "";
+//   final String password = "";
 
-  final bool isLoginEnabled = false;
+//   final bool isLoginEnabled = false;
 
-  const LoginViewModel({Key key}) : super(key: key);
+//   const LoginViewModel({Key key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        // child: child,
-        );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//         // child: child,
+//         );
+//   }
 
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return null;
-  }
-}
+//   @override
+//   State<StatefulWidget> createState() {
+//     // TODO: implement createState
+//     return null;
+//   }
+// }

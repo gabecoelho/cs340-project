@@ -20,51 +20,59 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  LoginViewModel loginViewModelBloc = LoginViewModel();
-
   @override
   Widget build(BuildContext context) {
+    final loginBloc = BlocProvider.of<LoginBloc>(context);
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.lightBlue[400],
-              Colors.lightBlue,
-              Colors.lightBlue[300],
-              Colors.teal[300]
-            ],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(45.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Icon(
-                FontAwesomeIcons.twitter,
-                color: Colors.white,
-                size: 55.0,
+      body: BlocProvider(
+        builder: (context) => loginBloc,
+        child: BlocBuilder(
+          bloc: loginBloc,
+          builder: (context, state) {
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.lightBlue[400],
+                    Colors.lightBlue,
+                    Colors.lightBlue[300],
+                    Colors.teal[300]
+                  ],
+                ),
               ),
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buildHandleField(),
+              child: Padding(
+                padding: const EdgeInsets.all(45.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(
+                      FontAwesomeIcons.twitter,
+                      color: Colors.white,
+                      size: 55.0,
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _buildHandleField(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _buildPasswordField(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      child: _buildSignupButton(context, "email", "pass"),
+                    ),
+                    state is Authenticated ? Text(state.message) : Container(),
+                    Spacer(),
+                    _buildLoginButton(),
+                  ],
+                ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buildPasswordField(),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                child: _buildSignupButton(),
-              ),
-              Spacer(),
-              _buildLoginButton(),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -81,19 +89,23 @@ Widget _buildLoginButton() {
   );
 }
 
-Widget _buildSignupButton() {
+Widget _buildSignupButton(BuildContext context, String email, String password) {
+  final loginBloc = BlocProvider.of<LoginBloc>(context);
+
   return LoginButton(
     borderColor: Colors.white,
     fillColor: Colors.white,
     textColor: Colors.teal,
     text: "Sign Up",
-    onTap: () {},
+    onTap: () {
+      loginBloc.dispatch(SignUp(email: email, password: password));
+    },
   );
 }
 
 Widget _buildHandleField() {
   return CupertinoTextField(
-    placeholder: "@Handle",
+    placeholder: "Email",
     style: TextStyle(color: Colors.white),
     placeholderStyle: TextStyle(color: Colors.white),
   );
@@ -105,8 +117,4 @@ Widget _buildPasswordField() {
     style: TextStyle(color: Colors.white),
     placeholderStyle: TextStyle(color: Colors.white),
   );
-}
-
-Widget _buildViewModelText() {
-  return Container();
 }
