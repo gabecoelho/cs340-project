@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoginButton extends StatelessWidget {
+class TwitterButton extends StatelessWidget {
   final Color fillColor;
   final Color borderColor;
   final String text;
@@ -9,7 +9,7 @@ class LoginButton extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
 
-  LoginButton({
+  TwitterButton({
     @required this.fillColor,
     this.borderColor,
     @required this.text,

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:twitter/widgets/login_button.dart';
+import 'package:twitter/widgets/twitter_button.dart';
 import '../viewmodels/login_viewmodel.dart';
 import 'package:bloc/bloc.dart';
 
@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     state is Authenticated ? Text(state.message) : Container(),
                     Spacer(),
-                    _buildLoginButton(),
+                    _buildTwitterButton(),
                   ],
                 ),
               ),
@@ -79,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
-Widget _buildLoginButton() {
+Widget _buildTwitterButton() {
   return FlatButton(
     onPressed: () {},
     child: Text(
@@ -92,7 +92,7 @@ Widget _buildLoginButton() {
 Widget _buildSignupButton(BuildContext context, String email, String password) {
   final loginBloc = BlocProvider.of<LoginBloc>(context);
 
-  return LoginButton(
+  return TwitterButton(
     borderColor: Colors.white,
     fillColor: Colors.white,
     textColor: Colors.teal,
