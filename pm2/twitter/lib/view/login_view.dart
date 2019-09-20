@@ -3,23 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter/widgets/twitter_button.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '../blocs/login_bloc.dart';
 import 'package:bloc/bloc.dart';
 
 class LoginView extends StatefulWidget {
   LoginView({Key key, this.title}) : super(key: key);
 
-  final String handle = "";
-  final bool isLoginEnabled = false;
-  final bool isSignupEnabled = false;
+  final String username = "";
   final String password = "";
   final String title;
+  final bool isLoginEnabled = false;
+  final bool isSignupEnabled = false;
 
   @override
   _LoginViewState createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
+  final usernameFieldController = TextEditingController();
+  final passwordFieldController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameFieldController.dispose();
+    passwordFieldController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
@@ -53,21 +63,18 @@ class _LoginViewState extends State<LoginView> {
                       size: 55.0,
                     ),
                     Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _buildHandleField(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _buildPasswordField(),
-                    ),
+                    _buildForm(state),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                      child: _buildSignupButton(context, "email", "pass"),
+                      child: _buildSignUpButton(
+                          context,
+                          usernameFieldController.text,
+                          passwordFieldController.text,
+                          state),
                     ),
-                    state is Authenticated ? Text(state.message) : Container(),
+                    // state is Authenticated ? Text(state.message) : Container(),
                     Spacer(),
-                    _buildTwitterButton(),
+                    _buildAlreadyHaveAnAccountButton(context, state),
                   ],
                 ),
               ),
@@ -79,42 +86,62 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
-Widget _buildTwitterButton() {
+Widget _buildAlreadyHaveAnAccountButton(BuildContext context, AuthState state) {
+  final loginBloc = BlocProvider.of<LoginBloc>(context);
+
   return FlatButton(
-    onPressed: () {},
+    onPressed: () {
+      loginBloc.dispatch(
+        state is SignUpFormDisplayed
+            ? SwitchToLoginPressed()
+            : SwitchToSignUpPressed(),
+      );
+    },
     child: Text(
-      "Already have an account? Log in!",
+      state is AuthFormState ? state.bottomTextLabel : "",
       style: TextStyle(color: Colors.white),
     ),
   );
 }
 
-Widget _buildSignupButton(BuildContext context, String email, String password) {
+Widget _buildSignUpButton(
+    BuildContext context, String email, String password, AuthState state) {
   final loginBloc = BlocProvider.of<LoginBloc>(context);
 
   return TwitterButton(
     borderColor: Colors.white,
     fillColor: Colors.white,
     textColor: Colors.teal,
-    text: "Sign Up",
+    text: state is AuthFormState ? state.buttonLabel : "",
     onTap: () {
       loginBloc.dispatch(SignUp(email: email, password: password));
     },
   );
 }
 
-Widget _buildHandleField() {
-  return CupertinoTextField(
-    placeholder: "Email",
-    style: TextStyle(color: Colors.white),
-    placeholderStyle: TextStyle(color: Colors.white),
-  );
-}
-
-Widget _buildPasswordField() {
-  return CupertinoTextField(
-    placeholder: "Password",
-    style: TextStyle(color: Colors.white),
-    placeholderStyle: TextStyle(color: Colors.white),
-  );
+Widget _buildForm(AuthState state) {
+  return Form(
+      child: new ListView(
+    shrinkWrap: true,
+    children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+        child: TextFormField(
+          decoration: InputDecoration(
+            hintText: state is AuthFormState ? state.firstFieldLabel : "",
+            hintStyle: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+        child: TextFormField(
+          decoration: InputDecoration(
+            hintText: "Password",
+            hintStyle: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ],
+  ));
 }
