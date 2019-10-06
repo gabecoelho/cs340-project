@@ -11,8 +11,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileEvent event,
   ) async* {
     if (event is ProfileSubmitPressedEvent) {
-      yield ProfileLoadingState();
-      // Then go to the next page...
+      yield ProfileSubmitState();
     }
     if (event is ProfilePictureChangedEvent) {
       yield ProfilePictureChangedState(image: event.image);

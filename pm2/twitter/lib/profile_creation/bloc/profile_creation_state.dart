@@ -19,4 +19,4 @@ class ProfilePictureChangedState extends ProfileState {
   ProfilePictureChangedState({@required this.image}) : super([image]);
 }
 
-// class ProfileSubmitState extends ProfileState {}
+class ProfileSubmitState extends ProfileState {}

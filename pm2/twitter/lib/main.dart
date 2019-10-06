@@ -29,11 +29,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.lightBlue,
         ),
         // home: LoginView(title: 'Twitter'),
-        home: MainView(),
+        home: LoginView(),
         routes: {
-          // When navigating to the "/" route, build the FirstScreen widget.
           '/login': (context) => LoginView(),
-          // When navigating to the "/second" route, build the SecondScreen widget.
+          '/main': (context) => MainView(),
         },
       ),
     );

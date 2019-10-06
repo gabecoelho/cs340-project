@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter/auth/bloc/bloc.dart';
+import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/profile_creation/bloc/bloc.dart';
 import 'package:twitter/widgets/twitter_button/twitter_button.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,44 +41,53 @@ class _ProfileViewState extends State<ProfileView> {
     return Scaffold(
       body: BlocProvider(
         builder: (context) => ProfileBloc(),
-        child: BlocBuilder(
+        child: BlocListener(
           bloc: profileBloc,
-          builder: (context, state) {
-            return Container(
-              width: double.infinity,
-              height: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(45.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    _buildAppBar(),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    _buildCircleImage(
-                        state is ProfilePictureChangedState
-                            ? state.image
-                            : null,
-                        profileBloc),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    _buildFirstNameField(),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    _buildLastNameField(),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: _buildSubmitButton(),
-                    ),
-                    Spacer()
-                  ],
-                ),
-              ),
-            );
+          listener: (context, state) {
+            if (state is ProfileSubmitState) {
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => MainView()));
+            }
           },
+          child: BlocBuilder(
+            bloc: profileBloc,
+            builder: (context, state) {
+              return Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(45.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      _buildAppBar(),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      _buildCircleImage(
+                          state is ProfilePictureChangedState
+                              ? state.image
+                              : null,
+                          profileBloc),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _buildFirstNameField(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      _buildLastNameField(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: _buildSubmitButton(),
+                      ),
+                      Spacer()
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -158,11 +169,14 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildSubmitButton() {
+    final profileBloc = BlocProvider.of<ProfileBloc>(context);
     return TwitterButton(
       textColor: Colors.white,
       text: "Get Started",
       fillColor: Colors.lightBlue,
-      onTap: () {},
+      onTap: () async {
+        profileBloc.dispatch(ProfileSubmitPressedEvent());
+      },
     );
   }
 }
