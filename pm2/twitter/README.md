@@ -1,4 +1,4 @@
-# CS 340 - twitter
+# CS 340 - Twitter Clone
 
 This project uses Flutter and the Dart programming language for UI programming.
 
