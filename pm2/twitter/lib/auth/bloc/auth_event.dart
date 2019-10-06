@@ -7,17 +7,17 @@ abstract class AuthEvent extends Equatable {
   AuthEvent([List props = const []]) : super(props);
 }
 
-class LogIn extends AuthEvent {
+class LogInEvent extends AuthEvent {
   final String handle;
   final String password;
-  LogIn({@required this.handle, @required this.password})
+  LogInEvent({@required this.handle, @required this.password})
       : super([handle, password]);
 }
 
-class SignUp extends AuthEvent {
+class SignUpEvent extends AuthEvent {
   final String email;
   final String password;
-  SignUp({@required this.email, @required this.password})
+  SignUpEvent({@required this.email, @required this.password})
       : super([email, password]);
 }
 

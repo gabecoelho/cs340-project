@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/auth/bloc/login_bloc.dart';
-import 'package:twitter/profile/bloc/bloc.dart';
-import 'package:twitter/profile/profile_view.dart';
-import './auth/login_view.dart';
-import './home/home_view.dart';
+import 'package:twitter/auth/login_view.dart';
+import 'package:twitter/home/bloc/bloc.dart';
+import 'package:twitter/main_view/main_view.dart';
+import 'package:twitter/profile_creation/bloc/bloc.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,7 +17,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProfileBloc>(
           builder: (context) => ProfileBloc(),
-        )
+        ),
+        BlocProvider<HomeBloc>(
+          builder: (context) => HomeBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -26,7 +29,12 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.lightBlue,
         ),
         // home: LoginView(title: 'Twitter'),
-        home: HomeView(),
+        home: MainView(),
+        routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
+          '/login': (context) => LoginView(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
+        },
       ),
     );
   }

@@ -26,6 +26,12 @@ class LoginBloc extends Bloc<AuthEvent, AuthState> {
             signUpButtonLabel: "Sign Up",
             bottomTextLabel: "Already Have An Account? Log In Here");
       }
+      if (event is SignUpEvent) {
+        yield NextPageState();
+      }
+      if (event is LogInEvent) {
+        yield NextPageState();
+      }
     } catch (e) {
       yield Error(message: "Error");
     }

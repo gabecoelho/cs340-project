@@ -48,3 +48,5 @@ class SignUpFormDisplayed extends AuthFormState {
       {this.emailLabel, this.signUpButtonLabel, this.bottomTextLabel})
       : super(emailLabel, signUpButtonLabel, bottomTextLabel);
 }
+
+class NextPageState extends AuthState {}

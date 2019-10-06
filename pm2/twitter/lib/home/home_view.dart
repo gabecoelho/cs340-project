@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter/model/tweet.dart';
+import 'package:twitter/model/user.dart';
+import 'package:twitter/services/strategy/fetch_feed_strategy.dart';
+import 'package:twitter/services/strategy/fetch_followers_strategy.dart';
+import 'package:twitter/services/strategy/fetch_story_strategy.dart';
+import 'package:twitter/services/strategy/fetch_following_strategy.dart';
+import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key key}) : super(key: key);
@@ -8,11 +15,13 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  Widget _buildAppBar() {
+  int currentIndex = 0;
+
+  Widget _buildAppBar(BuildContext context) {
     return Stack(
       children: <Widget>[
         DefaultTabController(
-          length: 4,
+          length: 3,
           child: Scaffold(
             appBar: AppBar(
               elevation: 10.0,
@@ -21,15 +30,6 @@ class _HomeViewState extends State<HomeView> {
                   Tab(
                     child: Text(
                       "Feed",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  Tab(
-                    child: Text(
-                      "Story",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 15,
@@ -64,52 +64,35 @@ class _HomeViewState extends State<HomeView> {
             ),
             body: TabBarView(
               children: [
-                // TODO: Call each state here?
-                Text(""),
-                Text(""),
-                Text(""),
-                Text(""),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TwitterListView<Tweet>(
+                    fetchListStrategy: FetchFeedStrategy(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TwitterListView<User>(
+                    fetchListStrategy: FetchFollowingStrategy(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TwitterListView<User>(
+                    fetchListStrategy: FetchFollowersStrategy(),
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      backgroundColor: Colors.blue[50],
-      type: BottomNavigationBarType.fixed,
-      currentIndex: 0, // th
-      items: [
-        BottomNavigationBarItem(
-          title: Container(height: 0.0),
-          icon: Icon(FontAwesomeIcons.home),
-        ),
-        BottomNavigationBarItem(
-          title: Container(height: 0.0),
-          icon: Icon(FontAwesomeIcons.search),
-        ),
-        BottomNavigationBarItem(
-          title: Container(height: 0.0),
-          icon: Icon(
-            FontAwesomeIcons.plusCircle,
-            size: 48,
-            color: Colors.lightBlue,
-          ),
-        ),
-        BottomNavigationBarItem(
-          title: Container(height: 0.0),
-          icon: Icon(FontAwesomeIcons.userAlt),
-        ),
-        BottomNavigationBarItem(
-          title: Container(height: 0.0),
-          icon: Icon(
-            Icons.settings,
-            size: 30,
+            floatingActionButton: FloatingActionButton(
+              child: Icon(
+                FontAwesomeIcons.envira,
+                size: 30,
+                color: Colors.white,
+              ),
+              //TODO: go to the new tweet view
+              onPressed: () {},
+            ),
           ),
         ),
       ],
@@ -119,9 +102,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: _buildBottomNavBar(),
       body: Container(
-        child: _buildAppBar(),
+        child: _buildAppBar(context),
       ),
     );
   }
