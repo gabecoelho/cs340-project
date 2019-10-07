@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
+import 'package:twitter/new_tweet/new_tweet_view.dart';
 import 'package:twitter/services/strategy/fetch_feed_strategy.dart';
 import 'package:twitter/services/strategy/fetch_followers_strategy.dart';
 import 'package:twitter/services/strategy/fetch_story_strategy.dart';
@@ -91,7 +92,10 @@ class _HomeViewState extends State<HomeView> {
                 color: Colors.white,
               ),
               //TODO: go to the new tweet view
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NewTweetView()));
+              },
             ),
           ),
         ),

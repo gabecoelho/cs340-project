@@ -6,6 +6,8 @@ import 'package:twitter/home/bloc/bloc.dart';
 import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/profile_creation/bloc/bloc.dart';
 
+import 'new_tweet/bloc/new_tweet_bloc.dart';
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<HomeBloc>(
           builder: (context) => HomeBloc(),
+        ),
+        BlocProvider<NewTweetBloc>(
+          builder: (context) => NewTweetBloc(),
         ),
       ],
       child: MaterialApp(
