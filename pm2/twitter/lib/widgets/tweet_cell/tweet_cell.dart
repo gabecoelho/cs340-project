@@ -6,10 +6,11 @@ import 'package:twitter/single_tweet_view/single_tweet_view.dart';
 class TweetCell extends StatelessWidget {
   final String username;
   final String handle;
+  // final List<TextSpan> message;
   final String message;
   final String timestamp;
   final File image;
-  File attachment;
+  final File attachment;
 
   TweetCell(
       {Key key,
@@ -21,7 +22,7 @@ class TweetCell extends StatelessWidget {
       this.attachment})
       : super(key: key);
 
-  UniqueKey uniqueKey = UniqueKey();
+  final UniqueKey uniqueKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class TweetCell extends StatelessWidget {
                         trailing: Text(timestamp),
                       ),
                       Container(
-                        child: Text(message),
+                        child: Text(message.toString()),
                       ),
                       attachment == null ? Container() : Image.file(attachment),
                       Divider()
@@ -73,7 +74,7 @@ class TweetCell extends StatelessWidget {
           },
         ),
         Container(
-          child: Text(message),
+          child: Text(message.toString()),
         ),
         attachment == null ? Container() : Image.file(attachment),
         Divider()

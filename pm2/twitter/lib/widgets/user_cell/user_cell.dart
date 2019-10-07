@@ -1,17 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:twitter/model/user.dart';
+import 'package:twitter/single_user_view/single_user_view.dart';
+import 'package:twitter/user_profile/user_profile_view.dart';
 
 class UserCell extends StatelessWidget {
-  final String name;
-  final String handle;
-  final File image;
+  final User user;
 
-  UserCell({
-    Key key,
-    this.name,
-    this.handle,
-    this.image,
-  }) : super(key: key);
+  UserCell({this.user}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +17,36 @@ class UserCell extends StatelessWidget {
         ListTile(
           isThreeLine: true,
           leading: CircleAvatar(
-            backgroundImage: FileImage(image),
+            backgroundImage: FileImage(user.picture),
             radius: 25,
           ),
-          title: Text(name),
-          subtitle: Text(handle),
+          title: Text(user.name),
+          subtitle: Text(user.handle),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SingleUserView(
+                  user: user,
+                  column: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundImage: FileImage(user.picture),
+                        radius: 80,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("${user.followers.length} Followers"),
+                      ),
+                      Text("${user.following.length} Following"),
+                      Divider(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
         Divider()
       ],

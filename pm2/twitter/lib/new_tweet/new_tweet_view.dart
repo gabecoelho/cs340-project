@@ -31,6 +31,7 @@ class _NewTweetViewState extends State<NewTweetView> {
     final newTweetBloc = BlocProvider.of<NewTweetBloc>(context);
 
     return Scaffold(
+      extendBody: true,
       appBar: _buildNewTweetAppBar(),
       body: BlocProvider(
         builder: (context) => newTweetBloc,

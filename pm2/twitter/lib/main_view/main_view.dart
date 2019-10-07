@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:twitter/home/home_view.dart';
+import 'package:twitter/model/user.dart';
 import 'package:twitter/search_view/search_view.dart';
 import 'package:twitter/user_profile/user_profile_view.dart';
 
@@ -12,7 +15,22 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int currentIndex = 0;
 
-  final List<Widget> _views = [HomeView(), UserProfileView(), SearchView()];
+  static User currentUser = User(
+      "John Doe",
+      "@johndoe",
+      "jd@jd.com",
+      File(
+          "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png"),
+      [],
+      []);
+
+  final List<Widget> _views = [
+    HomeView(),
+    UserProfileView(
+      user: currentUser,
+    ),
+    SearchView()
+  ];
 
   @override
   Widget build(BuildContext context) {
