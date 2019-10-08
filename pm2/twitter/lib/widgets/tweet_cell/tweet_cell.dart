@@ -1,16 +1,20 @@
 import 'dart:io';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:twitter/single_tweet_view/single_tweet_view.dart';
+import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
-class TweetCell extends StatelessWidget {
+enum WordType { User, Hashtag }
+
+class TweetCell extends StatefulWidget {
+  final File image;
   final String username;
   final String handle;
-  // final List<TextSpan> message;
   final String message;
   final String timestamp;
-  final File image;
   final File attachment;
+  final TweetInterface tweetInterface;
 
   TweetCell(
       {Key key,
@@ -19,10 +23,29 @@ class TweetCell extends StatelessWidget {
       this.message,
       this.timestamp,
       this.image,
-      this.attachment})
+      this.attachment,
+      this.tweetInterface})
       : super(key: key);
 
+  @override
+  _TweetCellState createState() => _TweetCellState();
+}
+
+class _TweetCellState extends State<TweetCell> {
   final UniqueKey uniqueKey = UniqueKey();
+
+  GestureRecognizer onWordTap(WordType wordType, String keyWord) {
+    return TapGestureRecognizer()
+      ..onTap = () {
+        switch (wordType) {
+          case WordType.User:
+            widget.tweetInterface?.userTapped(keyWord);
+            break;
+          case WordType.Hashtag:
+            widget.tweetInterface?.hashtagTapped(keyWord);
+        }
+      };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +60,12 @@ class TweetCell extends StatelessWidget {
           key: uniqueKey,
           isThreeLine: true,
           leading: CircleAvatar(
-            backgroundImage: FileImage(image),
+            backgroundImage: FileImage(widget.image),
             radius: 25,
           ),
-          title: Text(username),
-          subtitle: Text(handle),
-          trailing: Text(timestamp),
+          title: Text(widget.username),
+          subtitle: Text(widget.handle),
+          trailing: Text(widget.timestamp),
           onTap: () {
             Navigator.push(
               context,
@@ -54,17 +77,19 @@ class TweetCell extends StatelessWidget {
                         key: uniqueKey,
                         isThreeLine: true,
                         leading: CircleAvatar(
-                          backgroundImage: FileImage(image),
+                          backgroundImage: FileImage(widget.image),
                           radius: 25,
                         ),
-                        title: Text(username),
-                        subtitle: Text(handle),
-                        trailing: Text(timestamp),
+                        title: Text(widget.username),
+                        subtitle: Text(widget.handle),
+                        trailing: Text(widget.timestamp),
                       ),
                       Container(
-                        child: Text(message.toString()),
+                        child: Text(widget.message.toString()),
                       ),
-                      attachment == null ? Container() : Image.file(attachment),
+                      widget.attachment == null
+                          ? Container()
+                          : Image.file(widget.attachment),
                       Divider()
                     ],
                   ),
@@ -73,12 +98,58 @@ class TweetCell extends StatelessWidget {
             );
           },
         ),
-        Container(
-          child: Text(message.toString()),
+        // Container(
+        //   child: Text(widget.message),
+        // ),
+        RichText(
+          text: TextSpan(
+            children: _configureMessage(context, 16),
+          ),
         ),
-        attachment == null ? Container() : Image.file(attachment),
+        widget.attachment == null ? Container() : Image.file(widget.attachment),
         Divider()
       ],
     );
+  }
+
+  List<TextSpan> _configureMessage(
+    BuildContext context,
+    double fontSize,
+  ) {
+    List<TextSpan> configuredMessage = [];
+    List<String> words = widget.message.split(RegExp('\\s+'));
+    words.forEach((word) {
+      TextSpan wordWidget;
+      if (word.startsWith('@')) {
+        wordWidget = TextSpan(
+          text: '$word ',
+          recognizer: onWordTap(WordType.User, word),
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontSize: fontSize,
+          ),
+        );
+      } else if (word.startsWith('#')) {
+        wordWidget = TextSpan(
+          text: '$word ',
+          recognizer: onWordTap(WordType.Hashtag, word),
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontSize: fontSize,
+          ),
+        );
+      } else {
+        wordWidget = TextSpan(
+          text: '$word ',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: fontSize,
+          ),
+        );
+      }
+
+      configuredMessage.add(wordWidget);
+    });
+    return configuredMessage;
   }
 }

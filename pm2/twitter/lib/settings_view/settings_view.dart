@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class SearchView extends StatefulWidget {
-  SearchView({Key key}) : super(key: key);
+class SettingsView extends StatefulWidget {
+  SettingsView({Key key}) : super(key: key);
 
-  _SearchViewState createState() => _SearchViewState();
+  _SettingsViewState createState() => _SettingsViewState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:twitter/home/home_view.dart';
 import 'package:twitter/model/user.dart';
-import 'package:twitter/search_view/search_view.dart';
+import 'package:twitter/settings_view/settings_view.dart';
 import 'package:twitter/user_profile/user_profile_view.dart';
 
 class MainView extends StatefulWidget {
@@ -29,7 +29,7 @@ class _MainViewState extends State<MainView> {
     UserProfileView(
       user: currentUser,
     ),
-    SearchView()
+    SettingsView()
   ];
 
   @override
