@@ -38,7 +38,7 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
   @override
   void initState() {
     _bloc = TwitterListViewBloc<T>(widget.fetchListStrategy);
-    _bloc.dispatch(TwitterListViewFetchListEvent());
+    _bloc.add(TwitterListViewFetchListEvent());
     super.initState();
   }
 

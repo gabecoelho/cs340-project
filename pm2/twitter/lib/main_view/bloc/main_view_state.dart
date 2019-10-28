@@ -2,12 +2,11 @@ import 'package:equatable/equatable.dart';
 
 abstract class MainViewState extends Equatable {
   const MainViewState();
+
+  List<Object> get props => null;
 }
 
-class MainViewInitialState extends MainViewState {
-  @override
-  List<Object> get props => [];
-}
+class MainViewInitialState extends MainViewState {}
 
 class SearchButtonPressedState extends MainViewState {
   // Navigate to search view

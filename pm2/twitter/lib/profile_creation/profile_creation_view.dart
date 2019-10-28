@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:twitter/auth/bloc/bloc.dart';
+import 'package:twitter/auth/bloc.dart';
 import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/profile_creation/bloc/bloc.dart';
 import 'package:twitter/widgets/twitter_button/twitter_button.dart';
@@ -22,7 +22,7 @@ class _ProfileViewState extends State<ProfileView> {
     final image = await ImagePicker.pickImage(source: imageSource);
 
     if (image != null) {
-      profileBloc.dispatch(
+      profileBloc.add(
         ProfilePictureChangedEvent(image: image),
       );
     }
@@ -175,7 +175,7 @@ class _ProfileViewState extends State<ProfileView> {
       text: "Get Started",
       fillColor: Colors.lightBlue,
       onTap: () async {
-        profileBloc.dispatch(ProfileSubmitPressedEvent());
+        profileBloc.add(ProfileSubmitPressedEvent());
       },
     );
   }

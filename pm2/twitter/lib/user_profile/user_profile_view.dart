@@ -31,7 +31,7 @@ class _UserProfileViewState extends State<UserProfileView> {
     final image = await ImagePicker.pickImage(source: imageSource);
 
     if (image != null) {
-      profileBloc.dispatch(
+      profileBloc.add(
         ProfilePictureChangedEvent(image: image),
       );
     }
@@ -40,7 +40,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   @override
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
-
+    profileBloc.add(ProfileInitialEvent());
     return Scaffold(
       body: BlocProvider(
         builder: (context) => ProfileBloc(),
@@ -73,7 +73,7 @@ class _UserProfileViewState extends State<UserProfileView> {
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("${user.followers.length} Followers"),
+              child: Text("Followers"),
             ),
             onTap: () {
               Navigator.push(
@@ -86,7 +86,7 @@ class _UserProfileViewState extends State<UserProfileView> {
             },
           ),
           InkWell(
-            child: Text("${user.following.length} Following"),
+            child: Text("Following"),
             onTap: () {
               Navigator.push(
                 context,

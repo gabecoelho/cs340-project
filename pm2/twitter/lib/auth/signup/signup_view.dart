@@ -2,26 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter/auth/custom_route.dart';
+import 'package:twitter/auth/login/login_view.dart';
 import 'package:twitter/profile_creation/profile_creation_view.dart';
 import 'package:twitter/widgets/twitter_button/twitter_button.dart';
-import 'bloc/auth_state.dart';
-import 'bloc/login_bloc.dart';
-import './bloc/auth_event.dart';
+import 'bloc/signup_state.dart';
+import 'bloc/signup_bloc.dart';
+import 'bloc/signup_event.dart';
 
-class LoginView extends StatefulWidget {
-  LoginView({Key key, this.title}) : super(key: key);
+class SignupView extends StatefulWidget {
+  SignupView({Key key}) : super(key: key);
 
-  final bool isLoginEnabled = false;
-  final bool isSignupEnabled = false;
   final String password = "";
-  final String title;
   final String username = "";
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  _SignupViewState createState() => _SignupViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignupViewState extends State<SignupView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool passwordVisible = false;
@@ -33,30 +32,30 @@ class _LoginViewState extends State<LoginView> {
     'password': null,
   };
 
-  Widget _buildSubmitButton(BuildContext context, AuthState state) {
-    final loginBloc = BlocProvider.of<LoginBloc>(context);
+  Widget _buildSubmitButton(BuildContext context, SignupState state) {
+    final signupBloc = BlocProvider.of<SignupBloc>(context);
 
     return TwitterButton(
       borderColor: Colors.white,
       fillColor: Colors.white,
       textColor: Colors.teal,
-      text: state is AuthFormState ? state.buttonLabel : "",
+      text: "Sign up",
       onTap: () async {
         if (_formKey.currentState.validate()) {
           _formKey.currentState.save();
-          if (state is SignUpFormDisplayed) {
-            loginBloc.dispatch(SignUpEvent(
-                email: _formData['email'], password: _formData['password']));
-          } else {
-            loginBloc.dispatch(LogInEvent(
-                handle: _formData['handle'], password: _formData['password']));
-          }
+          signupBloc.add(
+            SignupSubmitEvent(
+              email: _formData['email'],
+              handle: _formData['handle'],
+              password: _formData['password'],
+            ),
+          );
         }
       },
     );
   }
 
-  Widget _buildForm(AuthState state, GlobalKey _formKey) {
+  Widget _buildForm(SignupState state, GlobalKey _formKey) {
     return Form(
         key: _formKey,
         child: new ListView(
@@ -66,44 +65,37 @@ class _LoginViewState extends State<LoginView> {
               padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
               child: TextFormField(
                 validator: (String value) {
-                  return state is SignUpFormDisplayed
-                      ? validateEmail(value)
-                      : validateHandle(value);
+                  return validateEmail(value);
                 },
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                    hintText:
-                        state is AuthFormState ? state.firstFieldLabel : "",
+                    hintText: "Email",
                     hintStyle: TextStyle(color: Colors.white),
                     labelStyle: TextStyle(color: Colors.white),
                     focusColor: Colors.white),
                 onFieldSubmitted: (_) =>
                     FocusScope.of(context).requestFocus(_passwordFocusNode),
                 onSaved: (String value) {
-                  state is SignUpFormDisplayed
-                      ? _formData['email'] = value
-                      : _formData['handle'] = value;
+                  _formData['email'] = value;
                 },
               ),
             ),
-            state is SignUpFormDisplayed
-                ? TextFormField(
-                    validator: (String value) {
-                      return validateHandle(value);
-                    },
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                        hintText: "@Handle",
-                        hintStyle: TextStyle(color: Colors.white),
-                        labelStyle: TextStyle(color: Colors.white),
-                        focusColor: Colors.white),
-                    onFieldSubmitted: (_) =>
-                        FocusScope.of(context).requestFocus(_passwordFocusNode),
-                    onSaved: (String value) {
-                      _formData['handle'] = value;
-                    },
-                  )
-                : Container(),
+            TextFormField(
+              validator: (String value) {
+                return validateHandle(value);
+              },
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                  hintText: "@Handle",
+                  hintStyle: TextStyle(color: Colors.white),
+                  labelStyle: TextStyle(color: Colors.white),
+                  focusColor: Colors.white),
+              onFieldSubmitted: (_) =>
+                  FocusScope.of(context).requestFocus(_passwordFocusNode),
+              onSaved: (String value) {
+                _formData['handle'] = value;
+              },
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
               // Password
@@ -128,20 +120,18 @@ class _LoginViewState extends State<LoginView> {
         ));
   }
 
-  Widget _buildAlreadyHaveAnAccountButton(
-      BuildContext context, AuthState state) {
-    final loginBloc = BlocProvider.of<LoginBloc>(context);
-
+  Widget _buildAlreadyHaveAnAccountButton(BuildContext context) {
     return FlatButton(
       onPressed: () {
-        loginBloc.dispatch(
-          state is SignUpFormDisplayed
-              ? SwitchToLoginPressed()
-              : SwitchToSignUpPressed(),
+        Navigator.pushReplacement(
+          context,
+          NoAnimationMaterialPageRoute(
+            builder: (context) => LoginView(),
+          ),
         );
       },
       child: Text(
-        state is AuthFormState ? state.bottomTextLabel : "",
+        "Already have an account? Log in!",
         style: TextStyle(color: Colors.white),
       ),
     );
@@ -149,21 +139,21 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final loginBloc = BlocProvider.of<LoginBloc>(context);
+    final signupBloc = BlocProvider.of<SignupBloc>(context);
 
     return Scaffold(
       body: BlocProvider(
-        builder: (context) => loginBloc,
+        builder: (context) => signupBloc,
         child: BlocListener(
-          bloc: loginBloc,
+          bloc: signupBloc,
           listener: (context, state) {
-            if (state is NextPageState) {
+            if (state is NextPageFromSignupState) {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => ProfileView()));
             }
           },
           child: BlocBuilder(
-            bloc: loginBloc,
+            bloc: signupBloc,
             builder: (context, state) {
               return Container(
                 width: double.infinity,
@@ -194,9 +184,8 @@ class _LoginViewState extends State<LoginView> {
                         padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                         child: _buildSubmitButton(context, state),
                       ),
-                      // state is Authenticated ? Text(state.message) : Container(),
                       Spacer(),
-                      _buildAlreadyHaveAnAccountButton(context, state),
+                      _buildAlreadyHaveAnAccountButton(context),
                     ],
                   ),
                 ),

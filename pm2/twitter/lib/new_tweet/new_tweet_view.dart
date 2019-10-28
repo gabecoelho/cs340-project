@@ -20,7 +20,7 @@ class _NewTweetViewState extends State<NewTweetView> {
     final image = await ImagePicker.pickImage(source: imageSource);
 
     if (image != null) {
-      newTweetBloc.dispatch(
+      newTweetBloc.add(
         AttachmentAddedNewTweetEvent(image: image),
       );
     }

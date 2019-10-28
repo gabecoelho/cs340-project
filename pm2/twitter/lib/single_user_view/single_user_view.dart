@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
+import 'package:twitter/profile_creation/bloc/profile_creation_bloc.dart';
+import 'package:twitter/profile_creation/bloc/profile_creation_event.dart';
 import 'package:twitter/services/strategy/fetch_story_strategy.dart';
 import 'package:twitter/user_profile/user_profile_view.dart';
 import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
-class SingleUserView extends StatelessWidget {
+class SingleUserView extends StatefulWidget {
   final Column column;
   final User user;
 
@@ -13,11 +16,21 @@ class SingleUserView extends StatelessWidget {
       : super(key: key);
 
   @override
+  _SingleUserViewState createState() => _SingleUserViewState();
+}
+
+class _SingleUserViewState extends State<SingleUserView> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         extendBody: true,
         appBar: _buildNewUserViewAppBar(context),
-        body: _buildUpperPiece());
+        body: Stack(
+          children: <Widget>[
+            _buildUpperPiece(context),
+            _buildFollowButton(),
+          ],
+        ));
   }
 
   Widget _buildNewUserViewAppBar(BuildContext context) {
@@ -33,29 +46,26 @@ class SingleUserView extends StatelessWidget {
     );
   }
 
-  Widget _buildUpperPiece() {
-    return UserProfileView(
-      user: this.user,
-    );
-  }
-
-  Widget _buildBottomPiece() {
-    return Expanded(
-      child: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: TwitterListView<Tweet>(
-          fetchListStrategy: FetchStoryStrategy(),
-        ),
+  Widget _buildUpperPiece(BuildContext context) {
+    return Stack(children: <Widget>[
+      UserProfileView(
+        user: this.widget.user,
       ),
-    );
+      // _buildFollowButton()
+    ]);
   }
 
-  Widget _buildSingleUserView() {
-    return Stack(
+  Widget _buildFollowButton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        _buildUpperPiece(),
-        _buildBottomPiece(),
+        RaisedButton(
+          color: Colors.lightBlue,
+          onPressed: () {},
+          shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(18.0),
+          ),
+        ),
       ],
     );
   }

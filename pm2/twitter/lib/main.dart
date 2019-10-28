@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twitter/auth/bloc/login_bloc.dart';
-import 'package:twitter/auth/login_view.dart';
+import 'package:twitter/auth/login/bloc/login_bloc.dart';
+import 'package:twitter/auth/login/login_view.dart';
+import 'package:twitter/auth/signup/bloc/signup_bloc.dart';
 import 'package:twitter/home/bloc/bloc.dart';
 import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/profile_creation/bloc/bloc.dart';
 
+import 'auth/signup/signup_view.dart';
 import 'new_tweet/bloc/new_tweet_bloc.dart';
 
 class MyApp extends StatelessWidget {
@@ -16,6 +18,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<LoginBloc>(
           builder: (context) => LoginBloc(),
+        ),
+        BlocProvider<SignupBloc>(
+          builder: (context) => SignupBloc(),
         ),
         BlocProvider<ProfileBloc>(
           builder: (context) => ProfileBloc(),
@@ -33,9 +38,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.lightBlue,
         ),
-        // home: LoginView(title: 'Twitter'),
-        home: LoginView(),
+        home: SignupView(),
         routes: {
+          '/signup': (context) => SignupView(),
           '/login': (context) => LoginView(),
           '/main': (context) => MainView(),
         },
