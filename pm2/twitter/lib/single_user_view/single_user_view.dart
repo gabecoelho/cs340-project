@@ -57,9 +57,13 @@ class _SingleUserViewState extends State<SingleUserView> {
 
   Widget _buildFollowButton() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         RaisedButton(
+          child: Text(
+            "Follow",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
           color: Colors.lightBlue,
           onPressed: () {},
           shape: RoundedRectangleBorder(
