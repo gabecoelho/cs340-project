@@ -17,10 +17,11 @@ import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 class UserProfileView extends StatefulWidget {
   final FetchListStrategy fetchListStrategy;
   final User user;
+  bool isOtherUser = false;
 
-  UserProfileView.empty(this.fetchListStrategy, this.user);
+  // UserProfileView.empty(this.fetchListStrategy, this.user);
 
-  UserProfileView({this.fetchListStrategy, this.user}) : super();
+  UserProfileView({this.fetchListStrategy, this.user, this.isOtherUser});
 
   _UserProfileViewState createState() => _UserProfileViewState();
 }
@@ -47,14 +48,15 @@ class _UserProfileViewState extends State<UserProfileView> {
         child: BlocBuilder(
             bloc: profileBloc,
             builder: (context, state) {
-              return _buildUserProfile(widget.user, profileBloc, state);
+              return _buildUserProfile(
+                  widget.user, profileBloc, state, widget.isOtherUser);
             }),
       ),
     );
   }
 
-  Widget _buildUserProfile(
-      User user, ProfileBloc profileBloc, ProfileState state) {
+  Widget _buildUserProfile(User user, ProfileBloc profileBloc,
+      ProfileState state, bool isOtherUser) {
     return Padding(
       padding: const EdgeInsets.all(60.0),
       child: Column(
@@ -67,7 +69,9 @@ class _UserProfileViewState extends State<UserProfileView> {
               radius: 80,
             ),
             onTap: () {
-              changeProfileImage(ImageSource.gallery, profileBloc);
+              print(widget.isOtherUser);
+              if (isOtherUser == false)
+                changeProfileImage(ImageSource.gallery, profileBloc);
             },
           ),
           InkWell(

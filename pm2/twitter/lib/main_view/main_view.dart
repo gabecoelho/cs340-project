@@ -28,6 +28,7 @@ class _MainViewState extends State<MainView> {
     HomeView(),
     UserProfileView(
       user: currentUser,
+      isOtherUser: false,
     ),
     SettingsView()
   ];
@@ -60,13 +61,6 @@ class _MainViewState extends State<MainView> {
             size: 30,
           ),
         ),
-        // BottomNavigationBarItem(
-        //   title: Container(height: 0.0),
-        //   icon: Icon(
-        //     Icons.search,
-        //     size: 30,
-        //   ),
-        // ),
         BottomNavigationBarItem(
           title: Container(height: 0.0),
           icon: Icon(

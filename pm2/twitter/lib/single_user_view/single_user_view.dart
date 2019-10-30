@@ -50,8 +50,8 @@ class _SingleUserViewState extends State<SingleUserView> {
     return Stack(children: <Widget>[
       UserProfileView(
         user: this.widget.user,
+        isOtherUser: true,
       ),
-      // _buildFollowButton()
     ]);
   }
 
