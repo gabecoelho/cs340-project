@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter/auth/signup/signup_view.dart';
-import 'package:twitter/home/home_view.dart';
+import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/widgets/twitter_button/twitter_button.dart';
 import '../custom_route.dart';
 import 'bloc/login_state.dart';
@@ -125,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
           listener: (context, state) {
             if (state is NextPageFromLoginState) {
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => HomeView()));
+                  context, MaterialPageRoute(builder: (context) => MainView()));
             }
           },
           child: BlocBuilder(

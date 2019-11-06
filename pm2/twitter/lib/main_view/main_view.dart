@@ -16,18 +16,17 @@ class _MainViewState extends State<MainView> {
   int currentIndex = 0;
 
   static User currentUser = User(
-      "John Doe",
-      "@johndoe",
-      "jd@jd.com",
-      File(
-          "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png"),
-      [],
-      []);
+    name: "John Doe",
+    handle: "@johndoe",
+    picture:
+        "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png",
+  );
 
   final List<Widget> _views = [
     HomeView(),
     UserProfileView(
       user: currentUser,
+      isOtherUser: false,
     ),
     SettingsView()
   ];
@@ -60,13 +59,6 @@ class _MainViewState extends State<MainView> {
             size: 30,
           ),
         ),
-        // BottomNavigationBarItem(
-        //   title: Container(height: 0.0),
-        //   icon: Icon(
-        //     Icons.search,
-        //     size: 30,
-        //   ),
-        // ),
         BottomNavigationBarItem(
           title: Container(height: 0.0),
           icon: Icon(

@@ -3,11 +3,23 @@ import 'dart:io';
 class User {
   final String name;
   final String handle;
-  final String email;
-  final File picture;
-  final List<User> followers;
-  final List<User> following;
+  final String picture;
 
-  User(this.name, this.handle, this.email, this.picture, this.followers,
-      this.following);
+  User({
+    this.name,
+    this.handle,
+    this.picture,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        name: json["name"],
+        handle: json["handle"],
+        picture: json["picture"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "handle": handle,
+        "picture": picture,
+      };
 }

@@ -16,3 +16,12 @@ class TwitterListViewLoadedState<T> extends TwitterListViewState {
   @override
   List<Object> get props => list;
 }
+
+class TwitterListViewRefreshedState<T> extends TwitterListViewState {
+  final List<T> list;
+
+  TwitterListViewRefreshedState(this.list) : super();
+
+  @override
+  List<Object> get props => list;
+}

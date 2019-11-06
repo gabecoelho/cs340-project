@@ -1,12 +1,15 @@
-import 'dart:io';
-
-import 'package:flutter/gestures.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:paging/paging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:twitter/facade/service_facade.dart';
+import 'package:twitter/hashtag/hashtag_view.dart';
+import 'package:twitter/model/authenticated_user.dart';
+import 'package:twitter/model/http_response_models/general_result.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/services/strategy/fetch_list_strategy.dart';
-import 'package:twitter/single_tweet_view/single_tweet_view.dart';
 import 'package:twitter/single_user_view/single_user_view.dart';
 import 'package:twitter/widgets/tweet_cell/tweet_cell.dart';
 import 'bloc/twitter_list_view_event.dart';
@@ -21,11 +24,13 @@ abstract class TweetInterface {
 
 class TwitterListView<T> extends StatefulWidget {
   final FetchListStrategy fetchListStrategy;
+  final AuthenticatedUser authenticatedUser;
 
-  const TwitterListView({
-    Key key,
-    this.fetchListStrategy,
-  }) : super(key: key);
+  const TwitterListView(
+      {Key key,
+      @required this.fetchListStrategy,
+      @required this.authenticatedUser})
+      : super(key: key);
 
   @override
   _TwitterListViewState<T> createState() => _TwitterListViewState<T>();
@@ -35,11 +40,32 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
     implements TweetInterface {
   TwitterListViewBloc _bloc;
 
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
   @override
   void initState() {
-    _bloc = TwitterListViewBloc<T>(widget.fetchListStrategy);
+    _bloc = TwitterListViewBloc<T>(
+        widget.fetchListStrategy, widget.authenticatedUser);
     _bloc.add(TwitterListViewFetchListEvent());
     super.initState();
+  }
+
+  _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+
+    _bloc.add(TwitterListViewRefreshEvent());
+
+    _refreshController.loadComplete();
   }
 
   @override
@@ -49,19 +75,47 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
       child: BlocBuilder(
         bloc: _bloc,
         builder: (context, state) {
-          if (state is TwitterListViewLoadedState) {
-            return Container(
+          print(state.toString());
+          if (state is TwitterListViewLoadedState ||
+              state is TwitterListViewRefreshedState) {
+            return SmartRefresher(
+              enableTwoLevel: true,
+              controller: _refreshController,
+              // onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              // enablePullDown: true,
+              enablePullUp: true,
+              // header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("Pull to load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = CircularProgressIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed! Click to retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("Release to load");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
               child: ListView.builder(
                 itemCount: state.list.length,
                 itemBuilder: (context, i) {
                   if (T == Tweet) {
                     final tweet = state.list[i];
                     return TweetCell(
-                      username: tweet.username,
                       handle: tweet.handle,
                       message: tweet.message,
-                      timestamp: tweet.timestamp,
-                      image: tweet.image,
+                      timestamp: tweet.timestamp.toString(),
+                      picture: tweet.picture,
                       attachment: tweet.attachment,
                       tweetInterface: this,
                     );
@@ -73,6 +127,7 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
                   }
                 },
               ),
+              // ),
             );
           } else {
             return Container();
@@ -87,37 +142,19 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SingleTweetView(
-          column: Column(
-            children: <Widget>[
-              TweetCell(
-                username: "whatevs",
-                handle: "@whatevs",
-                message: "This is a message with a #hashtag",
-                timestamp: "Oct 7",
-                image: File(
-                    "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png"),
-                tweetInterface: this,
-                attachment: null,
-              ),
-            ],
-          ),
-        ),
+        builder: (context) => HashtagView(),
       ),
     );
   }
 
   @override
   void userTapped(String handle) {
+    //TODO: get User
     User user = User(
-        "John Doe",
-        "@johndoe",
-        "jd@jd.com",
-        File(
-            "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png"),
-        [],
-        []);
-
+      name: "John Doe",
+      handle: handle,
+      picture: "",
+    );
     Navigator.push(
       context,
       MaterialPageRoute(

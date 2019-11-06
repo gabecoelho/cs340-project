@@ -17,10 +17,10 @@ class UserCell extends StatelessWidget {
         ListTile(
           isThreeLine: true,
           leading: CircleAvatar(
-            backgroundImage: FileImage(user.picture),
+            backgroundImage: NetworkImage(user.picture),
             radius: 25,
           ),
-          title: Text(user.name),
+          title: Text(user.handle),
           subtitle: Text(user.handle),
           onTap: () {
             Navigator.push(
@@ -32,14 +32,14 @@ class UserCell extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       CircleAvatar(
-                        backgroundImage: FileImage(user.picture),
+                        backgroundImage: NetworkImage(user.picture),
                         radius: 80,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text("${user.followers.length} Followers"),
+                        child: Text("Followers"),
                       ),
-                      Text("${user.following.length} Following"),
+                      Text("Following"),
                       Divider(),
                     ],
                   ),

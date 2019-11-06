@@ -1,16 +1,26 @@
-import 'dart:io';
-import 'package:flutter/widgets.dart';
-import 'package:twitter/model/tweet.dart';
+import 'package:twitter/facade/service_facade.dart';
+import 'package:twitter/model/authenticated_user.dart';
+import 'package:twitter/model/http_response_models/feed_result.dart';
 import 'package:twitter/services/strategy/fetch_list_strategy.dart';
 import 'package:twitter/services/mock/mock_tweet_list.dart';
 
 class FetchFeedStrategy implements FetchListStrategy {
   @override
-  Future fetchList() async {
-    //call mock service...
-    //return tweet?
-    MockTweetList mockTweetList = MockTweetList();
+  Future fetchList(AuthenticatedUser authenticatedUser) async {
+    // MockTweetList mockTweetList = MockTweetList();
+    // return await mockTweetList.getFeed();
 
-    return await mockTweetList.getFeed();
+    ServiceFacade serviceFacade = ServiceFacade();
+    FeedResult result = await serviceFacade.getFeed("authenticatedUser.user");
+    List list = authenticatedUser.feed;
+    list.addAll(result.getList());
+    authenticatedUser.feed = list;
+
+    if (authenticatedUser.user.handle ==
+        UserModelSingleton().userModel.user.handle) {
+      UserModelSingleton().userModel = authenticatedUser;
+    }
+
+    return authenticatedUser.feed;
   }
 }
