@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:twitter/model/tweet.dart';
 
 class MockTweetList {
@@ -10,33 +11,29 @@ class MockTweetList {
   List<Tweet> getFeed() {
     // call 3rd party API to get a list of tweets from a user
     Tweet hashtagTweet = Tweet(
-        "John Doe",
-        "@johndoe",
-        "This is a message with a #hashtag",
-        "Oct 4",
-        File(
+      handle: "@johndoe",
+      message: "This is a message with a #hashtag",
+      timestamp: DateTime.now(),
+      picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
-        ));
+    );
 
     Tweet aliasTweet = Tweet(
-        "Mike Shinoda",
-        "@mikeshinoda",
-        "saying hello to @johndoe",
-        "Oct 3",
-        File(
+      handle: "@mikeshinoda",
+      message: "saying hello to @johndoe",
+      timestamp: DateTime.now(),
+      picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/2_placeholder.png',
-        ));
+    );
 
     Tweet attachmentTweet = Tweet(
-      "Ed Sheeran",
-      "@eddy",
-      "an attachment",
-      "Oct 3",
-      File(
-        '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/3_placeholder.png',
-      ),
-      attachment: File(
-          '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/real_twitter.png'),
+      handle: "@eddy",
+      message: "an attachment",
+      timestamp: DateTime.now(),
+      picture:
+          '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/3_placeholder.png',
+      attachment:
+          '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/real_twitter.png',
     );
 
     List<Tweet> list = List();
@@ -49,22 +46,20 @@ class MockTweetList {
 
   List<Tweet> getStory() {
     Tweet mySecondTweet = Tweet(
-        "John Doe",
-        "@johndoe",
-        "This is my second tweet",
-        "Oct 4",
-        File(
+      handle: "@johndoe",
+      message: "This is my second tweet",
+      timestamp: DateTime.now(),
+      picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
-        ));
+    );
 
     Tweet myFirstTweet = Tweet(
-        "John Doe",
-        "@johndoe",
-        "This is my first tweet",
-        "Oct 3",
-        File(
+      handle: "@johndoe",
+      message: "This is my first tweet",
+      timestamp: DateTime.now(),
+      picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
-        ));
+    );
 
     List<Tweet> list = List();
     list.add(mySecondTweet);

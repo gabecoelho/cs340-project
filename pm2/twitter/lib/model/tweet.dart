@@ -1,15 +1,30 @@
-import 'dart:io';
-
 class Tweet {
-  final String username;
-  final String handle;
-  final String message;
-  final String timestamp;
-  final File image;
-  File attachment;
+  String handle;
+  String message;
+  String picture;
+  String attachment;
+  DateTime timestamp;
 
-  Tweet(this.username, this.handle, this.message, this.timestamp, this.image,
-      {this.attachment});
+  Tweet(
+      {this.handle,
+      this.message,
+      this.picture,
+      this.attachment,
+      this.timestamp});
 
-  Future getImageUrl() {}
+  factory Tweet.fromJson(Map<String, dynamic> json) => Tweet(
+        handle: json["handle"],
+        message: json["message"],
+        picture: json["picture"],
+        attachment: json["attachment"],
+        timestamp: DateTime.parse(json["timestamp"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "handle": handle,
+        "message": message,
+        "picture": picture,
+        "attachment": attachment,
+        "timestamp": timestamp.toIso8601String(),
+      };
 }

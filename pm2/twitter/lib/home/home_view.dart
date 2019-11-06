@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter/model/authenticated_user.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/new_tweet/new_tweet_view.dart';
@@ -16,6 +17,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  UserModelSingleton userModelSingleton = UserModelSingleton();
+
   int currentIndex = 0;
 
   Widget _buildAppBar(BuildContext context) {
@@ -69,18 +72,21 @@ class _HomeViewState extends State<HomeView> {
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<Tweet>(
                     fetchListStrategy: FetchFeedStrategy(),
+                    authenticatedUser: userModelSingleton.userModel,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowingStrategy(),
+                    authenticatedUser: userModelSingleton.userModel,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowersStrategy(),
+                    authenticatedUser: userModelSingleton.userModel,
                   ),
                 ),
               ],

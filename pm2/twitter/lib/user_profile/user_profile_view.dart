@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:twitter/model/authenticated_user.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/profile_creation/bloc/profile_creation_bloc.dart';
@@ -27,6 +28,8 @@ class UserProfileView extends StatefulWidget {
 }
 
 class _UserProfileViewState extends State<UserProfileView> {
+  UserModelSingleton userModelSingleton = UserModelSingleton();
+
   void changeProfileImage(
       ImageSource imageSource, ProfileBloc profileBloc) async {
     final image = await ImagePicker.pickImage(source: imageSource);
@@ -65,7 +68,7 @@ class _UserProfileViewState extends State<UserProfileView> {
             child: CircleAvatar(
               backgroundImage: state is ProfilePictureChangedState
                   ? FileImage(state.image)
-                  : FileImage(user.picture),
+                  : NetworkImage(user.picture),
               radius: 80,
             ),
             onTap: () {
@@ -108,6 +111,7 @@ class _UserProfileViewState extends State<UserProfileView> {
               height: double.infinity,
               child: TwitterListView<Tweet>(
                 fetchListStrategy: FetchStoryStrategy(),
+                authenticatedUser: userModelSingleton.userModel,
               ),
             ),
           ),

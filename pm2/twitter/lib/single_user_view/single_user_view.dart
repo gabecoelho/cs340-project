@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twitter/model/authenticated_user.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/profile_creation/bloc/profile_creation_bloc.dart';
@@ -20,6 +21,7 @@ class SingleUserView extends StatefulWidget {
 }
 
 class _SingleUserViewState extends State<SingleUserView> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

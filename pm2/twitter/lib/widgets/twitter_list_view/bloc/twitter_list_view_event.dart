@@ -7,3 +7,5 @@ abstract class TwitterListViewEvent extends Equatable {
 }
 
 class TwitterListViewFetchListEvent extends TwitterListViewEvent {}
+
+class TwitterListViewRefreshEvent extends TwitterListViewEvent {}

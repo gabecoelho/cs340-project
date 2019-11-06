@@ -8,21 +8,19 @@ import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 enum WordType { User, Hashtag }
 
 class TweetCell extends StatefulWidget {
-  final File image;
-  final String username;
   final String handle;
   final String message;
   final String timestamp;
-  final File attachment;
+  final String picture;
+  final String attachment;
   final TweetInterface tweetInterface;
 
   TweetCell(
       {Key key,
-      this.username,
       this.handle,
       this.message,
       this.timestamp,
-      this.image,
+      this.picture,
       this.attachment,
       this.tweetInterface})
       : super(key: key);
@@ -60,10 +58,10 @@ class _TweetCellState extends State<TweetCell> {
           key: uniqueKey,
           isThreeLine: true,
           leading: CircleAvatar(
-            backgroundImage: FileImage(widget.image),
+            backgroundImage: NetworkImage(widget.picture),
             radius: 25,
           ),
-          title: Text(widget.username),
+          title: Text(widget.handle),
           subtitle: Text(widget.handle),
           trailing: Text(widget.timestamp),
           onTap: () {
@@ -77,10 +75,10 @@ class _TweetCellState extends State<TweetCell> {
                         key: uniqueKey,
                         isThreeLine: true,
                         leading: CircleAvatar(
-                          backgroundImage: FileImage(widget.image),
+                          backgroundImage: NetworkImage(widget.picture),
                           radius: 25,
                         ),
-                        title: Text(widget.username),
+                        title: Text(widget.handle),
                         subtitle: Text(widget.handle),
                         trailing: Text(widget.timestamp),
                       ),
@@ -89,7 +87,7 @@ class _TweetCellState extends State<TweetCell> {
                       ),
                       widget.attachment == null
                           ? Container()
-                          : Image.file(widget.attachment),
+                          : Image.network(widget.attachment),
                       Divider()
                     ],
                   ),
@@ -98,15 +96,14 @@ class _TweetCellState extends State<TweetCell> {
             );
           },
         ),
-        // Container(
-        //   child: Text(widget.message),
-        // ),
         RichText(
           text: TextSpan(
             children: _configureMessage(context, 16),
           ),
         ),
-        widget.attachment == null ? Container() : Image.file(widget.attachment),
+        widget.attachment == null
+            ? Container()
+            : Image.network(widget.attachment),
         Divider()
       ],
     );
