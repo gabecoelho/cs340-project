@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:amazon_cognito_identity_dart/cognito.dart';
+
 class User {
-  final String name;
-  final String handle;
-  final String picture;
+  String name;
+  String handle;
+  String picture;
 
   User({
     this.name,
@@ -16,6 +18,19 @@ class User {
         handle: json["handle"],
         picture: json["picture"],
       );
+
+  /// Decode user from Cognito User Attributes
+  factory User.fromUserAttributes(List<CognitoUserAttribute> attributes) {
+    final user = User();
+    attributes.forEach((attribute) {
+      if (attribute.getName() == 'name') {
+        user.name = attribute.getValue();
+      } else if (attribute.getName() == 'nickname') {
+        user.handle = attribute.getValue();
+      }
+    });
+    return user;
+  }
 
   Map<String, dynamic> toJson() => {
         "name": name,

@@ -15,5 +15,5 @@ class SignupSubmitEvent extends SignupEvent {
       {@required this.email, @required this.handle, @required this.password});
 
   @override
-  List<Object> get props => [email, password];
+  List<Object> get props => [email, handle, password];
 }
