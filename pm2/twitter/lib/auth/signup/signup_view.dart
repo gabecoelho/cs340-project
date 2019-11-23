@@ -29,6 +29,7 @@ class _SignupViewState extends State<SignupView> {
 
   final Map<String, dynamic> _formData = {
     'email': null,
+    'handle': null,
     'password': null,
   };
 
@@ -86,7 +87,7 @@ class _SignupViewState extends State<SignupView> {
               },
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                  hintText: "@Handle",
+                  hintText: "Handle",
                   hintStyle: TextStyle(color: Colors.white),
                   labelStyle: TextStyle(color: Colors.white),
                   focusColor: Colors.white),
@@ -107,8 +108,8 @@ class _SignupViewState extends State<SignupView> {
                 ),
                 focusNode: _passwordFocusNode,
                 validator: (String value) {
-                  return (value.isEmpty || value.length < 8)
-                      ? 'Password must have at least 8 letters.'
+                  return (value.isEmpty || value.length < 6)
+                      ? 'Password must have at least 6 letters.'
                       : null;
                 },
                 onSaved: (String value) {
@@ -148,8 +149,10 @@ class _SignupViewState extends State<SignupView> {
           bloc: signupBloc,
           listener: (context, state) {
             if (state is NextPageFromSignupState) {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ProfileView()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfileView(_formData)));
             }
           },
           child: BlocBuilder(
@@ -214,13 +217,13 @@ String validateEmail(String value) {
 
 String validateHandle(String value) {
   if (value.isEmpty) {
-    return 'Please enter a valid \"@handle\".';
+    return 'Please enter a valid handle".';
   }
 
-  Pattern pattern = r'^@([A-Za-z0-9]{1,16})$';
+  Pattern pattern = r'^([A-Za-z0-9]{1,16})$';
   RegExp regex = new RegExp(pattern);
   if (!regex.hasMatch(value))
-    return 'Please enter a valid \"@handle\".';
+    return 'Please enter a valid handle".';
   else
     return null;
 }

@@ -1,4 +1,4 @@
 package lambdas.tweet.hashtag;
 
-public class HashtagR {
+public class HashtagResult {
 }

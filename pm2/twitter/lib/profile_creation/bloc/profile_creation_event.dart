@@ -11,7 +11,21 @@ abstract class ProfileEvent extends Equatable {
 
 class ProfileInitialEvent extends ProfileEvent {}
 
-class ProfileSubmitPressedEvent extends ProfileEvent {}
+class ProfileSubmitPressedEvent extends ProfileEvent {
+  final String email;
+  final String password;
+  final String name;
+  final String handle;
+
+  ProfileSubmitPressedEvent(
+      {@required this.email,
+      @required this.password,
+      @required this.name,
+      @required this.handle});
+
+  @override
+  List<Object> get props => [email, password, name, handle];
+}
 
 class ProfilePictureChangedEvent extends ProfileEvent {
   final File image;

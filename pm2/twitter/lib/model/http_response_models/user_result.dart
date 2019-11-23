@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:twitter/model/user.dart';
+
 UserResult userResultFromJson(String str) =>
     UserResult.fromJson(json.decode(str));
 
@@ -22,29 +24,5 @@ class UserResult {
 
   Map<String, dynamic> toJson() => {
         "user": user.toJson(),
-      };
-}
-
-class User {
-  String name;
-  String handle;
-  String picture;
-
-  User({
-    this.name,
-    this.handle,
-    this.picture,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        name: json["name"],
-        handle: json["handle"],
-        picture: json["picture"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "handle": handle,
-        "picture": picture,
       };
 }

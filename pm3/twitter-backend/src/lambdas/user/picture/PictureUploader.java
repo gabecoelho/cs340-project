@@ -1,4 +1,4 @@
-package lambdas.user.edit;
+package lambdas.user.picture;
 
 public class PictureUploader {
 }

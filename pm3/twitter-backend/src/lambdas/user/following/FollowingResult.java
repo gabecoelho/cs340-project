@@ -4,10 +4,10 @@ import lambdas.user.User;
 
 import java.util.List;
 
-public class FollowersResult {
-    public List<User> followers;
+public class FollowingResult {
+    public List<User> following;
 
-    public FollowersResult(List<User> followers) {
-        this.followers = followers;
+    public FollowingResult(List<User> following) {
+        this.following = following;
     }
 }

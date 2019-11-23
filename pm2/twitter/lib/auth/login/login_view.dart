@@ -46,6 +46,9 @@ class _LoginViewState extends State<LoginView> {
           loginBloc.add(LoginSubmitEvent(
               handle: _formData['handle'], password: _formData['password']));
         }
+        if (state is LoginFailedState) {
+          _showSnackBar(context, "Login Failed");
+        }
       },
     );
   }
@@ -59,12 +62,13 @@ class _LoginViewState extends State<LoginView> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
               child: TextFormField(
-                validator: (String value) {
-                  return validateHandle(value);
-                },
+                // validator: (String value) {
+                //   return validateHandle(value);
+                // },
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                    hintText: "@Handle",
+                    // hintText: "Handle",
+                    hintText: "Email",
                     hintStyle: TextStyle(color: Colors.white),
                     labelStyle: TextStyle(color: Colors.white),
                     focusColor: Colors.white),
@@ -85,11 +89,11 @@ class _LoginViewState extends State<LoginView> {
                   hintStyle: TextStyle(color: Colors.white),
                 ),
                 focusNode: _passwordFocusNode,
-                validator: (String value) {
-                  return (value.isEmpty || value.length < 8)
-                      ? 'Password must have at least 8 letters.'
-                      : null;
-                },
+                // validator: (String value) {
+                //   return (value.isEmpty || value.length < 6)
+                //       ? 'Password must have at least 6 letters.'
+                //       : null;
+                // },
                 onSaved: (String value) {
                   _formData['password'] = value;
                 },
@@ -175,6 +179,17 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
+void _showSnackBar(BuildContext context, String message) {
+  final scaffold = Scaffold.of(context);
+  scaffold.showSnackBar(
+    SnackBar(
+      content: Text(message),
+      action: SnackBarAction(
+          label: 'Dismiss', onPressed: scaffold.hideCurrentSnackBar),
+    ),
+  );
+}
+
 String validateEmail(String value) {
   if (value.isEmpty) {
     return 'Please enter a valid email.';
@@ -191,13 +206,13 @@ String validateEmail(String value) {
 
 String validateHandle(String value) {
   if (value.isEmpty) {
-    return 'Please enter a valid \"@handle\".';
+    return 'Please enter a valid \"handle\".';
   }
 
-  Pattern pattern = r'^@([A-Za-z0-9]{1,16})$';
+  Pattern pattern = r'^([A-Za-z0-9]{1,16})$';
   RegExp regex = new RegExp(pattern);
   if (!regex.hasMatch(value))
-    return 'Please enter a valid \"@handle\".';
+    return 'Please enter a valid \"handle\".';
   else
     return null;
 }
