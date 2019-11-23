@@ -1,6 +1,6 @@
 package lambdas.user.story;
 
-public class FeedRequest {
+public class StoryRequest {
 
     String username;
 

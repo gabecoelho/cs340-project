@@ -4,10 +4,10 @@ import lambdas.tweet.Tweet;
 
 import java.util.List;
 
-public class Feed {
-    public List<Tweet> feed;
+public class Story {
+    public List<Tweet> story;
 
-    public Feed(List<Tweet> feed) {
-        this.feed = feed;
+    public Story(List<Tweet> story) {
+        this.story = story;
     }
 }

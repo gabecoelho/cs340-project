@@ -1,9 +1,9 @@
 package lambdas.user.story;
 
-public class FeedResult {
-    public Feed feed;
+public class StoryResult {
+    public Story story;
 
-    public FeedResult(Feed feed) {
-        this.feed = feed;
+    public StoryResult(Story story) {
+        this.story = story;
     }
 }

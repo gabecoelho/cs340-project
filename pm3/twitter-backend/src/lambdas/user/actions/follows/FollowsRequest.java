@@ -1,4 +1,4 @@
 package lambdas.user.actions.follows;
 
-public class FollowRequest {
+public class FollowsRequest {
 }

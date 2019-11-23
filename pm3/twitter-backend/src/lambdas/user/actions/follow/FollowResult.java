@@ -1,4 +1,4 @@
-package lambdas.user.actions;
+package lambdas.user.actions.follow;
 
 public class FollowResult {
     public String follower;

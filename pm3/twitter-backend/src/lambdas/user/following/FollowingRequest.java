@@ -1,5 +1,5 @@
 package lambdas.user.following;
 
-public class FollowersRequest {
+public class FollowingRequest {
     String username;
 }
