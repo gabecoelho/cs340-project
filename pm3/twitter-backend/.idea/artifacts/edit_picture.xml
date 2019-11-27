@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/edit_picture</output-path>
     <root id="archive" name="edit-picture.jar">
       <element id="library" level="project" name="com.amazonaws:aws-lambda-java-core:1.2.0" />
-      <element id="dir-copy" path="$PROJECT_DIR$/out/production/twitter-backend/lambdas/user/picture" />
+      <element id="dir-copy" path="$PROJECT_DIR$/out/production/twitter-backend/lambdas/User/picture" />
     </root>
   </artifact>
 </component>
