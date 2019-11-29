@@ -4,72 +4,98 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.*;
 
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
+
+import lambdas.dto.TweetDTO;
+import lambdas.story.StoryResult;
+
 public class TweetDAO extends GeneralDAO {
-    public String userHandle;
-    public String userName;
-    public String userPhoto;
-    public String message;
-    public String attachment;
-    public String timestamp;
 
     private static final String TableName = "tweet";
+    private static final String HandleAttr = "user_handle";
+    private static final String TimestampAttr = "timestamp";
+    private static final String AttachmentAttr = "attachment";
+    private static final String MessageAttr = "message";
+    private static final String NameAttr = "user_name";
+    private static final String PhotoAttr = "user_photo";
 
-    public TweetDAO(String userHandle, String userName, String userPhoto, String message, String attachment, String timestamp) {
-        this.userHandle = userHandle;
-        this.userName = userName;
-        this.userPhoto = userPhoto;
-        this.message = message;
-        this.attachment = attachment;
-        this.timestamp = timestamp;
+    private String timestamp =  new SimpleDateFormat("yyyyMMddHHmmssX").format(new Date());
+
+    public TweetDAO() {}
+
+    public boolean postTweet(TweetDTO tweetDTO) {
+        Table table = dynamoDB.getTable(TableName);
+
+        try {
+            Item item = new Item()
+                    .withPrimaryKey(HandleAttr, tweetDTO.getUserHandle(), TimestampAttr, timestamp)
+                    .withString(MessageAttr, tweetDTO.getMessage())
+                    .withString(NameAttr, tweetDTO.getUserName())
+                    .withString(PhotoAttr, tweetDTO.getUserPhoto());
+            if (tweetDTO.getAttachment() != null) {
+                item.withString(AttachmentAttr, tweetDTO.getAttachment());
+            }
+            table.putItem(item);
+            return true;
+        }
+        catch (Exception e) {
+            System.out.println("Could not add item to DB:" + e.toString());
+            return false;
+        }
     }
 
-    public TweetDAO(){}
+    public StoryResult getStory(String handle, int pageSize, String lastResult) {
+        List<TweetDTO> story = new ArrayList<>();
+        StoryResult result = new StoryResult();
 
-    public String getUserHandle() {
-        return userHandle;
-    }
+        Map<String, String> attrNames = new HashMap<String, String>();
+        attrNames.put("#user_handle", HandleAttr);
 
-    public void setUserHandle(String userHandle) {
-        this.userHandle = userHandle;
-    }
+        Map<String, AttributeValue> attrValues = new HashMap<>();
+        attrValues.put(":user_handle", new AttributeValue().withS(handle));
 
-    public String getUserName() {
-        return userName;
-    }
+        QueryRequest queryRequest = new QueryRequest()
+                .withTableName(TableName)
+                .withKeyConditionExpression("#user_handle = :user_handle")
+                .withExpressionAttributeNames(attrNames)
+                .withExpressionAttributeValues(attrValues)
+                .withLimit(pageSize);
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+        if (isNonEmptyString(lastResult)) {
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(HandleAttr, new AttributeValue().withS(handle));
+            startKey.put(TimestampAttr, new AttributeValue().withS(lastResult));
 
-    public String getUserPhoto() {
-        return userPhoto;
-    }
+            queryRequest = queryRequest.withExclusiveStartKey(startKey);
+        }
 
-    public void setUserPhoto(String userPhoto) {
-        this.userPhoto = userPhoto;
-    }
+        QueryResult queryResult = amazonDynamoDB.query(queryRequest);
+        List<Map<String, AttributeValue>> items = queryResult.getItems();
+        if (items != null) {
+            for (Map<String, AttributeValue> item : items){
+                TweetDTO tweetDTO = new TweetDTO(
+                        item.get(HandleAttr).getS(),
+                        item.get(NameAttr).getS(),
+                        item.get(PhotoAttr).getS(),
+                        item.get(MessageAttr).getS(),
+                        item.get(AttachmentAttr).getS(),
+                        item.get(TimestampAttr).getS()
+                );
+                story.add(tweetDTO);
+            }
+        }
 
-    public String getMessage() {
-        return message;
-    }
+        Map<String, AttributeValue> lastKey = queryResult.getLastEvaluatedKey();
+        if (lastKey != null) {
+            result.setLastKey(lastKey.get(TimestampAttr).getS());
+        }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+        result.setStory(story);
+        return result;
     }
 }
