@@ -11,7 +11,6 @@ import lambdas.followers.FollowersResult;
 import lambdas.dto.UserDTO;
 import lambdas.follow.FollowResult;
 import lambdas.following.FollowingResult;
-import lambdas.picture.PictureUploadResult;
 import lambdas.unfollow.UnfollowResult;
 import lambdas.user.UserResult;
 
@@ -32,8 +31,6 @@ public class UserDAO extends GeneralDAO {
     private static final String FollowerAttr = "follower_handle";
     private static final String FolloweeAttr = "followee_handle";
     private static final String bucketName = "340-twitter-bucket";
-
-    public UserDAO() {}
 
     public UserResult getUser(String handle) {
         Table table = dynamoDB.getTable(UserTableName);

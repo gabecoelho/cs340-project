@@ -27,8 +27,6 @@ public class TweetDAO extends GeneralDAO {
 
     private String timestamp =  new SimpleDateFormat("yyyyMMddHHmmssX").format(new Date());
 
-    public TweetDAO() {}
-
     public TweetPostResult postTweet(TweetDTO tweetDTO) {
         Table table = dynamoDB.getTable(TableName);
         TweetPostResult result = new TweetPostResult();
