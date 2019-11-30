@@ -1,5 +1,7 @@
 package lambdas.following;
 
 public class FollowingRequest {
-    String username;
+    String handle;
+    int pageSize;
+    String lastResult;
 }

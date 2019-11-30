@@ -1,13 +1,28 @@
 package lambdas.following;
 
 import lambdas.dao.UserDAO;
+import lambdas.dto.UserDTO;
 
 import java.util.List;
 
 public class FollowingResult {
-    public List<UserDAO> following;
+    public List<UserDTO> following;
+    private String lastKey;
 
-    public FollowingResult(List<UserDAO> following) {
-        this.following = following;
+    public List<UserDTO> getFollowing() {
+        return following;
+    }
+
+    public String getLastKey() {
+        return lastKey;
+    }
+    public void setLastKey(String value) {
+        lastKey = value;
+    }
+    public boolean hasLastKey() {
+        return (lastKey != null && lastKey.length() > 0);
+    }
+    public void addValue(UserDTO v) {
+        following.add(v);
     }
 }

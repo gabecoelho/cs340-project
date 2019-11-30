@@ -1,7 +1,7 @@
 package lambdas.story;
 
 public class StoryRequest {
-
-    String username;
-
+    String handle;
+    int itemSize;
+    String lastResult;
 }

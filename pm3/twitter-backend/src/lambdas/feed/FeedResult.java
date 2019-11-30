@@ -5,7 +5,6 @@ import lambdas.dto.TweetDTO;
 import java.util.List;
 
 public class FeedResult {
-
     private List<TweetDTO> feed;
     private String lastKey;
 

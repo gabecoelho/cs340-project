@@ -5,6 +5,12 @@ public class UserDTO {
     private String userName;
     private String userPicture;
 
+    public UserDTO(String userHandle, String userName, String userPicture) {
+        this.userHandle = userHandle;
+        this.userName = userName;
+        this.userPicture = userPicture;
+    }
+
     public String getUserHandle() {
         return userHandle;
     }

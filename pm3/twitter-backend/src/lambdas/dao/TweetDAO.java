@@ -13,6 +13,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
 import lambdas.dto.TweetDTO;
 import lambdas.story.StoryResult;
+import lambdas.tweetPoster.TweetPostResult;
 
 public class TweetDAO extends GeneralDAO {
 
@@ -28,8 +29,9 @@ public class TweetDAO extends GeneralDAO {
 
     public TweetDAO() {}
 
-    public boolean postTweet(TweetDTO tweetDTO) {
+    public TweetPostResult postTweet(TweetDTO tweetDTO) {
         Table table = dynamoDB.getTable(TableName);
+        TweetPostResult result = new TweetPostResult();
 
         try {
             Item item = new Item()
@@ -41,16 +43,16 @@ public class TweetDAO extends GeneralDAO {
                 item.withString(AttachmentAttr, tweetDTO.getAttachment());
             }
             table.putItem(item);
-            return true;
+            result.setSuccess(true);
         }
         catch (Exception e) {
             System.out.println("Could not add item to DB:" + e.toString());
-            return false;
+            result.setSuccess(false);
         }
+        return result;
     }
 
     public StoryResult getStory(String handle, int pageSize, String lastResult) {
-        List<TweetDTO> story = new ArrayList<>();
         StoryResult result = new StoryResult();
 
         Map<String, String> attrNames = new HashMap<String, String>();
@@ -86,7 +88,7 @@ public class TweetDAO extends GeneralDAO {
                         item.get(AttachmentAttr).getS(),
                         item.get(TimestampAttr).getS()
                 );
-                story.add(tweetDTO);
+                result.addValue(tweetDTO);
             }
         }
 
@@ -95,7 +97,6 @@ public class TweetDAO extends GeneralDAO {
             result.setLastKey(lastKey.get(TimestampAttr).getS());
         }
 
-        result.setStory(story);
         return result;
     }
 }
