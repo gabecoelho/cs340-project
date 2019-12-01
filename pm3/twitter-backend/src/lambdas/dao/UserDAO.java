@@ -24,14 +24,23 @@ import java.util.UUID;
 
 public class UserDAO extends GeneralDAO {
 
+    // User table
     private static final String UserTableName = "user";
-    private static final String FollowTableName = "follow";
-    private static final String FollowIndexName = "follow-index";
     private static final String HandleAttr = "user_handle";
     private static final String NameAttr = "user_name";
     private static final String PhotoAttr = "user_photo";
-    private static final String FollowerAttr = "follower_handle";
-    private static final String FolloweeAttr = "followee_handle";
+
+    // Follow table
+    private static final String FollowTableName = "follow";
+    private static final String FollowIndexName = "follow-index";
+    private static final String FollowerHandleAttr = "follower_handle";
+    private static final String FollowerNameAttr = "follower_name";
+    private static final String FollowerPhotoAttr = "follower_photo";
+    private static final String FolloweeHandleAttr = "followee_handle";
+    private static final String FolloweeNameAttr = "followee_name";
+    private static final String FolloweePhotoAttr = "followee_photo";
+
+    // S3
     private static final String bucketName = "340-twitter-bucket";
 
     AmazonS3 s3 = AmazonS3ClientBuilder
@@ -59,7 +68,7 @@ public class UserDAO extends GeneralDAO {
         Table table = dynamoDB.getTable(UserTableName);
 
         try {
-            Item item = new Item().withPrimaryKey(FollowerAttr, follower_handle, FolloweeAttr, followee_handle);
+            Item item = new Item().withPrimaryKey(FollowerHandleAttr, follower_handle, FolloweeHandleAttr, followee_handle);
             table.putItem(item);
             System.out.println("Item " + item.toString() + " entered.");
         }
@@ -76,7 +85,7 @@ public class UserDAO extends GeneralDAO {
 
     public UnfollowResult unfollow(String follower_handle, String followee_handle) {
         Table table = dynamoDB.getTable(UserTableName);
-        table.deleteItem(FollowerAttr, follower_handle, FolloweeAttr, followee_handle);
+        table.deleteItem(FollowerHandleAttr, follower_handle, FolloweeHandleAttr, followee_handle);
         return new UnfollowResult(follower_handle,followee_handle,false);
     }
 
@@ -85,7 +94,7 @@ public class UserDAO extends GeneralDAO {
         FollowersResult result = new FollowersResult();
 
         Map<String, String> attrNames = new HashMap<String, String>();
-        attrNames.put("#followee_handle", HandleAttr);
+        attrNames.put("#followee_handle", FolloweeHandleAttr);
 
         Map<String, AttributeValue> attrValues = new HashMap<>();
         attrValues.put(":followee_handle", new AttributeValue().withS(handle));
@@ -100,8 +109,8 @@ public class UserDAO extends GeneralDAO {
 
         if (isNonEmptyString(lastResult)) {
             Map<String, AttributeValue> lastKey = new HashMap<>();
-            lastKey.put(FolloweeAttr, new AttributeValue().withS(handle));
-            lastKey.put(FollowerAttr, new AttributeValue().withS(lastResult));
+            lastKey.put(FolloweeHandleAttr, new AttributeValue().withS(handle));
+            lastKey.put(FollowerHandleAttr, new AttributeValue().withS(lastResult));
 
             queryRequest = queryRequest.withExclusiveStartKey(lastKey);
         }
@@ -111,9 +120,9 @@ public class UserDAO extends GeneralDAO {
         if (items != null) {
             for (Map<String, AttributeValue> item : items) {
                 UserDTO userDTO = new UserDTO(
-                        item.get(HandleAttr).getS(),
-                        item.get(NameAttr).getS(),
-                        item.get(PhotoAttr).getS()
+                        item.get(FollowerHandleAttr).getS(),
+                        item.get(FollowerNameAttr).getS(),
+                        item.get(FollowerPhotoAttr).getS()
                 );
                 result.addValue(userDTO);
             }
@@ -121,7 +130,7 @@ public class UserDAO extends GeneralDAO {
 
         Map<String, AttributeValue> lastKey = queryResult.getLastEvaluatedKey();
         if (lastKey != null) {
-            result.setLastKey(lastKey.get(FollowerAttr).getS());
+            result.setLastKey(lastKey.get(FollowerHandleAttr).getS());
         }
         return result;
     }
@@ -131,7 +140,7 @@ public class UserDAO extends GeneralDAO {
         FollowingResult result = new FollowingResult();
 
         Map<String, String> attrNames = new HashMap<String, String>();
-        attrNames.put("#follower_handle", HandleAttr);
+        attrNames.put("#follower_handle", FollowerHandleAttr);
 
         Map<String, AttributeValue> attrValues = new HashMap<>();
         attrValues.put(":follower_handle", new AttributeValue().withS(handle));
@@ -145,8 +154,8 @@ public class UserDAO extends GeneralDAO {
 
         if (isNonEmptyString(lastResult)) {
             Map<String, AttributeValue> lastKey = new HashMap<>();
-            lastKey.put(FollowerAttr, new AttributeValue().withS(handle));
-            lastKey.put(FolloweeAttr, new AttributeValue().withS(lastResult));
+            lastKey.put(FollowerHandleAttr, new AttributeValue().withS(handle));
+            lastKey.put(FolloweeHandleAttr, new AttributeValue().withS(lastResult));
 
             queryRequest = queryRequest.withExclusiveStartKey(lastKey);
         }
@@ -156,9 +165,9 @@ public class UserDAO extends GeneralDAO {
         if (items != null) {
             for (Map<String, AttributeValue> item : items){
                 UserDTO userDTO = new UserDTO(
-                        item.get(HandleAttr).getS(),
-                        item.get(NameAttr).getS(),
-                        item.get(PhotoAttr).getS()
+                        item.get(FolloweeHandleAttr).getS(),
+                        item.get(FolloweeNameAttr).getS(),
+                        item.get(FolloweePhotoAttr).getS()
                 );
                 result.addValue(userDTO);
             }
@@ -166,14 +175,14 @@ public class UserDAO extends GeneralDAO {
 
         Map<String, AttributeValue> lastKey = queryResult.getLastEvaluatedKey();
         if (lastKey != null) {
-            result.setLastKey(lastKey.get(FolloweeAttr).getS());
+            result.setLastKey(lastKey.get(FolloweeHandleAttr).getS());
         }
         return result;
     }
 
     public boolean follows(String follower, String followee) {
         Table table = dynamoDB.getTable(FollowTableName);
-        Item item = table.getItem(FollowerAttr, follower, FolloweeAttr, followee);
+        Item item = table.getItem(FollowerHandleAttr, follower, FolloweeHandleAttr, followee);
         return item != null;
     }
 

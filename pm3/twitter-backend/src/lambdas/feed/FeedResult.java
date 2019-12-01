@@ -2,17 +2,15 @@ package lambdas.feed;
 
 import lambdas.dto.TweetDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeedResult {
-    private List<TweetDTO> feed;
-    private String lastKey;
+    public List<TweetDTO> feed = new ArrayList<>();
+    public String lastKey;
 
     public List<TweetDTO> getFeed() {
         return feed;
-    }
-    public void setFeed(List<TweetDTO> feed) {
-        this.feed = feed;
     }
     public String getLastKey() {
         return lastKey;

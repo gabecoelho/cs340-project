@@ -12,16 +12,20 @@ import java.util.Map;
 public class FeedDAO extends GeneralDAO {
 
     private static final String TableName = "feed";
-    private static final String HandleAttr = "user_handle";
-    private static final String NameAttr = "user_name";
-    private static final String PhotoAttr = "user_photo";
-    private static final String MessageAttr = "message";
     private static final String AttachmentAttr = "attachment";
+    private static final String MessageAttr = "message";
     private static final String TimestampAttr = "timestamp";
+    private static final String TweetAuthorAttr = "tweet_author_handle";
+    private static final String HandleAttr = "user_handle";
+    private static final String NameAttr = "tweet_author_name";
+    private static final String PhotoAttr = "user_photo";
 
     public FeedDAO() {}
 
     public FeedResult getFeed(String handle, int pageSize, String lastItem) {
+        if (pageSize == 0) {
+            pageSize = 10;
+        }
         FeedResult result = new FeedResult();
 
         Map<String, String> attrNames;
@@ -41,7 +45,6 @@ public class FeedDAO extends GeneralDAO {
         if (isNonEmptyString(lastItem)) {
             Map<String, AttributeValue> startKey = new HashMap<>();
             startKey.put(HandleAttr, new AttributeValue().withS(handle));
-            // TODO: make sure this is correct
             startKey.put(TimestampAttr, new AttributeValue().withS(lastItem));
 
             queryRequest = queryRequest.withExclusiveStartKey(startKey);
@@ -52,8 +55,13 @@ public class FeedDAO extends GeneralDAO {
         if (items != null) {
             for (Map<String, AttributeValue> item : items) {
                 TweetDTO tweetDTO = new TweetDTO(
-                        item.get(HandleAttr).getS(), item.get(NameAttr).getS(), item.get(PhotoAttr).getS(),
-                        item.get(MessageAttr).getS(), item.get(AttachmentAttr).getS(), item.get(TimestampAttr).getS());
+                        item.get(TweetAuthorAttr).getS(),
+                        item.get(NameAttr).getS(),
+                        item.get(PhotoAttr).getS(),
+                        item.get(MessageAttr).getS(),
+                        item.get(AttachmentAttr).getS(),
+                        item.get(TimestampAttr).getS()
+                );
                 result.addValue(tweetDTO);
             }
         }
@@ -62,8 +70,6 @@ public class FeedDAO extends GeneralDAO {
         if (lastKey != null) {
             result.setLastKey(lastKey.get(TimestampAttr).getS());
         }
-
-
         return result;
     }
 }

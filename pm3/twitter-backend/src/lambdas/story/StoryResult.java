@@ -2,11 +2,12 @@ package lambdas.story;
 
 import lambdas.dto.TweetDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StoryResult {
 
-    public List<TweetDTO> story;
+    public List<TweetDTO> story = new ArrayList<>();
     public String lastKey;
 
     public List<TweetDTO> getStory() {
