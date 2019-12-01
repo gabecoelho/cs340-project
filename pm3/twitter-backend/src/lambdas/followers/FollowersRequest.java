@@ -1,7 +1,7 @@
 package lambdas.followers;
 
 public class FollowersRequest {
-    String handle;
-    int pageSize;
-    String lastResult;
+    public String handle;
+    public int pageSize;
+    public String lastResult;
 }

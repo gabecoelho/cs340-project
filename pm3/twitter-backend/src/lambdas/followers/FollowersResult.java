@@ -6,8 +6,8 @@ import lambdas.dto.UserDTO;
 import java.util.List;
 
 public class FollowersResult {
-    private List<UserDTO> followers;
-    private String lastKey;
+    public List<UserDTO> followers;
+    public  String lastKey;
 
     public List<UserDTO> getFollowers() {
         return followers;

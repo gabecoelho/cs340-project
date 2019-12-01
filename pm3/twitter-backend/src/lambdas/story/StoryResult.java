@@ -6,8 +6,8 @@ import java.util.List;
 
 public class StoryResult {
 
-    private List<TweetDTO> story;
-    private String lastKey;
+    public List<TweetDTO> story;
+    public String lastKey;
 
     public List<TweetDTO> getStory() {
         return story;

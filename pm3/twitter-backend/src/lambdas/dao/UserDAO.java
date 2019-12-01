@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lambdas.followers.FollowersResult;
@@ -32,11 +34,16 @@ public class UserDAO extends GeneralDAO {
     private static final String FolloweeAttr = "followee_handle";
     private static final String bucketName = "340-twitter-bucket";
 
+    AmazonS3 s3 = AmazonS3ClientBuilder
+            .standard()
+            .withRegion("us-west-2")
+            .build();
+
     public UserResult getUser(String handle) {
         Table table = dynamoDB.getTable(UserTableName);
         UserResult result = new UserResult();
 
-        Item item = table.getItem(HandleAttr, handle);
+        Item item = table.getItem("user_handle", handle);
         if (item != null) {
             UserDTO user = new UserDTO(
                     item.getString(HandleAttr),
@@ -174,8 +181,8 @@ public class UserDAO extends GeneralDAO {
         String fileTitle = UUID.randomUUID().toString();
 
         PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, base64String);
-        s3Client.putObject(request);
-        URL s3Url = s3Client.getUrl(bucketName, fileTitle);
+        s3.putObject(request);
+        URL s3Url = s3.getUrl(bucketName, fileTitle);
 
         // Change user's profile picture in User's table AND Cognito user pool:
         // Since this is method should be called before the Cognito SIGN-UP,
@@ -190,8 +197,8 @@ public class UserDAO extends GeneralDAO {
 
         // Upload a file as a new object with ContentType and title specified.
         PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, base64String);
-        s3Client.putObject(request);
-        URL s3Url = s3Client.getUrl(bucketName, fileTitle);
+        s3.putObject(request);
+        URL s3Url = s3.getUrl(bucketName, fileTitle);
         System.out.println("S3 url is " + s3Url.toExternalForm());
 
         // Change user's profile picture in User's table AND Cognito user pool:
