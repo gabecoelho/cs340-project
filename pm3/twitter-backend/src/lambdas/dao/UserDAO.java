@@ -17,6 +17,7 @@ import lambdas.dto.UserDTO;
 import lambdas.follow.FollowResult;
 import lambdas.following.FollowingResult;
 import lambdas.follows.FollowsResult;
+import lambdas.unfollow.UnfollowRequest;
 import lambdas.unfollow.UnfollowResult;
 import lambdas.user.UserResult;
 
@@ -95,10 +96,10 @@ public class UserDAO extends GeneralDAO {
         );
     }
 
-    public UnfollowResult unfollow(String follower_handle, String followee_handle) {
+    public UnfollowResult unfollow(UnfollowRequest request) {
         Table table = dynamoDB.getTable(UserTableName);
-        table.deleteItem(FollowerHandleAttr, follower_handle, FolloweeHandleAttr, followee_handle);
-        return new UnfollowResult(follower_handle,followee_handle,false);
+        table.deleteItem(FollowerHandleAttr, request.follower, FolloweeHandleAttr, request.followee);
+        return new UnfollowResult(request.follower,request.followee,false);
     }
 
     public FollowersResult getFollowers(String handle, int pageSize, String lastResult) {
