@@ -24,7 +24,6 @@ import lambdas.user.UserResult;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 
 public class UserDAO extends GeneralDAO {
@@ -98,8 +97,8 @@ public class UserDAO extends GeneralDAO {
 
     public UnfollowResult unfollow(UnfollowRequest request) {
         Table table = dynamoDB.getTable(UserTableName);
-        table.deleteItem(FollowerHandleAttr, request.follower, FolloweeHandleAttr, request.followee);
-        return new UnfollowResult(request.follower,request.followee,false);
+        table.deleteItem(FollowerHandleAttr, request.follower_handle, FolloweeHandleAttr, request.followee_handle);
+        return new UnfollowResult(request.follower_handle,request.followee_handle,false);
     }
 
     public FollowersResult getFollowers(String handle, int pageSize, String lastResult) {
