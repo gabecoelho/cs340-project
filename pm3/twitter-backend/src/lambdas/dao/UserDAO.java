@@ -96,7 +96,7 @@ public class UserDAO extends GeneralDAO {
     }
 
     public UnfollowResult unfollow(UnfollowRequest request) {
-        Table table = dynamoDB.getTable(UserTableName);
+        Table table = dynamoDB.getTable(FollowTableName);
         table.deleteItem(FollowerHandleAttr, request.follower_handle, FolloweeHandleAttr, request.followee_handle);
         return new UnfollowResult(request.follower_handle,request.followee_handle,false);
     }
