@@ -20,12 +20,14 @@ public class FeedDAO extends GeneralDAO {
     private static final String NameAttr = "tweet_author_name";
     private static final String PhotoAttr = "user_photo";
 
-    public FeedDAO() {}
-
     public FeedResult getFeed(String handle, int pageSize, String lastItem) {
+        // TODO: Show me the tweets from ONLY users I follow:
+        // TODO: Sort the tweets by timestamp
+
         if (pageSize == 0) {
             pageSize = 10;
         }
+
         FeedResult result = new FeedResult();
 
         Map<String, String> attrNames;

@@ -2,10 +2,10 @@ package lambdas.follow;
 
 public class FollowResult {
     public String follower;
-    public String following;
+    public String followee;
 
-    public FollowResult(String follower, String following) {
+    public FollowResult(String follower, String followee) {
         this.follower = follower;
-        this.following = following;
+        this.followee = followee;
     }
 }

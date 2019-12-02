@@ -1,5 +1,6 @@
 package lambdas.dao;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
@@ -7,20 +8,23 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import lambdas.follow.FollowRequest;
 import lambdas.followers.FollowersResult;
 import lambdas.dto.UserDTO;
 import lambdas.follow.FollowResult;
 import lambdas.following.FollowingResult;
+import lambdas.follows.FollowsResult;
 import lambdas.unfollow.UnfollowResult;
 import lambdas.user.UserResult;
 
+import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
 
 public class UserDAO extends GeneralDAO {
 
@@ -43,6 +47,9 @@ public class UserDAO extends GeneralDAO {
     // S3
     private static final String bucketName = "340-twitter-bucket";
 
+    ClientConfiguration configuration = new ClientConfiguration();
+
+
     AmazonS3 s3 = AmazonS3ClientBuilder
             .standard()
             .withRegion("us-west-2")
@@ -64,22 +71,27 @@ public class UserDAO extends GeneralDAO {
         return result;
     }
 
-    public FollowResult follow(String follower_handle, String followee_handle) {
-        Table table = dynamoDB.getTable(UserTableName);
+    public FollowResult follow(FollowRequest request) {
+        Table table = dynamoDB.getTable(FollowTableName);
 
         try {
-            Item item = new Item().withPrimaryKey(FollowerHandleAttr, follower_handle, FolloweeHandleAttr, followee_handle);
+            Item item = new Item()
+                    .withPrimaryKey(FollowerHandleAttr, request.follower_handle, FolloweeHandleAttr, request.followee_handle)
+                    .withString(FollowerNameAttr, request.follower_name)
+                    .withString(FollowerPhotoAttr, request.follower_photo)
+                    .withString(FolloweeNameAttr, request.followee_name)
+                    .withString(FolloweePhotoAttr, request.followee_photo);
             table.putItem(item);
             System.out.println("Item " + item.toString() + " entered.");
         }
         catch (Exception e) {
-            System.out.println("Could not follow user " + followee_handle + ": " + e.toString());
+            System.out.println("Could not follow user " + request.followee_handle + ": " + e.toString());
             return null;
         }
 
         return new FollowResult(
-                follower_handle,
-                followee_handle
+                request.follower_handle,
+                request.followee_handle
         );
     }
 
@@ -180,16 +192,25 @@ public class UserDAO extends GeneralDAO {
         return result;
     }
 
-    public boolean follows(String follower, String followee) {
+    public FollowsResult follows(String follower, String followee) {
         Table table = dynamoDB.getTable(FollowTableName);
+        FollowsResult result = new FollowsResult();
         Item item = table.getItem(FollowerHandleAttr, follower, FolloweeHandleAttr, followee);
-        return item != null;
+
+        result.follows = item != null;
+        return result;
     }
 
     public String uploadProfilePicture(String base64String) {
         String fileTitle = UUID.randomUUID().toString();
+        byte[] fileInBytes = Base64.getDecoder().decode(base64String.getBytes(StandardCharsets.UTF_8));
+        InputStream fis = new ByteArrayInputStream(fileInBytes);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(fileInBytes.length);
+        metadata.setCacheControl("public, max-age=31536000");
 
-        PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, base64String);
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, fis, metadata);
+
         s3.putObject(request);
         URL s3Url = s3.getUrl(bucketName, fileTitle);
 
@@ -203,14 +224,18 @@ public class UserDAO extends GeneralDAO {
 
     public String editProfilePicture(String handle, String base64String) {
         String fileTitle = UUID.randomUUID().toString();
+        byte[] fileInBytes = Base64.getDecoder().decode(base64String.getBytes(StandardCharsets.UTF_8));
+        InputStream fis = new ByteArrayInputStream(fileInBytes);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(fileInBytes.length);
+        metadata.setCacheControl("public, max-age=31536000");
 
-        // Upload a file as a new object with ContentType and title specified.
-        PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, base64String);
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileTitle, fis, metadata);
+
         s3.putObject(request);
         URL s3Url = s3.getUrl(bucketName, fileTitle);
-        System.out.println("S3 url is " + s3Url.toExternalForm());
 
-        // Change user's profile picture in User's table AND Cognito user pool:
+        // TODO: Change user's profile picture in User's table AND Cognito user pool:
         // it should update the users table with the new picture URL of the picture and
         // maybe also in the Cognito user pool.
         updateUsersTableWithNewPicture(handle, s3Url.toExternalForm());
@@ -225,9 +250,9 @@ public class UserDAO extends GeneralDAO {
             Map<String, Object> attrValues = new HashMap<String, Object>();
 
             attrNames.put("#user_photo", PhotoAttr);
-            attrValues.put(":user_photo", url);
+            attrValues.put(":photo", url);
 
-            table.updateItem(HandleAttr, handle, "set #user_handle = " + handle + " with new photo: :user_photo", attrNames, attrValues);
+            table.updateItem(HandleAttr, handle, "set #user_photo = :photo", attrNames, attrValues);
         }
         catch (Exception e) {
             System.out.println("There was a problem updating users table with new picture: " + e.toString());

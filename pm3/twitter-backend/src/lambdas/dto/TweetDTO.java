@@ -2,12 +2,12 @@ package lambdas.dto;
 
 public class TweetDTO {
 
-    private String userHandle;
-    private String userName;
-    private String userPhoto;
-    private String message;
-    private String attachment;
-    private String timestamp;
+    public String userHandle;
+    public String userName;
+    public String userPhoto;
+    public String message;
+    public String attachment;
+    public String timestamp;
 
     public TweetDTO(String userHandle, String userName, String userPhoto, String message, String attachment, String timestamp) {
         this.userHandle = userHandle;
@@ -17,6 +17,8 @@ public class TweetDTO {
         this.attachment = attachment;
         this.timestamp = timestamp;
     }
+
+    public TweetDTO(){}
 
     public String getUserHandle() {
         return userHandle;
