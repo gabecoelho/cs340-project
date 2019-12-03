@@ -4,6 +4,6 @@ import lambdas.dao.UserDAO;
 
 public class PictureUploader {
     public String handleRequest(PictureUploadRequest request) {
-        return new UserDAO().uploadProfilePicture(request.base64EncodedString);
+        return new UserDAO().uploadProfilePicture(request.handle, request.base64EncodedString);
     }
 }

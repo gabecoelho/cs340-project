@@ -11,6 +11,8 @@ public class UserDTO {
         this.userPicture = userPicture;
     }
 
+    public UserDTO() {}
+
     public String getUserHandle() {
         return userHandle;
     }
