@@ -2,6 +2,6 @@ package lambdas.story;
 
 public class StoryRequest {
     public String handle;
-    public int itemSize;
+    public int pageSize;
     public String lastResult;
 }
