@@ -15,10 +15,10 @@ public class FeedDAO extends GeneralDAO {
     private static final String AttachmentAttr = "attachment";
     private static final String MessageAttr = "message";
     private static final String TimestampAttr = "timestamp";
-    private static final String TweetAuthorAttr = "tweet_author_handle";
+    private static final String TweetAuthorHandleAttr = "tweet_author_handle";
+    private static final String TweetAuthorNameAttr = "tweet_author_name";
+    private static final String TweetAuthorPhoto = "tweet_author_photo";
     private static final String HandleAttr = "user_handle";
-    private static final String NameAttr = "tweet_author_name";
-    private static final String PhotoAttr = "user_photo";
 
     public FeedResult getFeed(String handle, int pageSize, String lastItem) {
         // TODO: Show me the tweets from ONLY users I follow:
@@ -57,9 +57,9 @@ public class FeedDAO extends GeneralDAO {
         if (items != null) {
             for (Map<String, AttributeValue> item : items) {
                 TweetDTO tweetDTO = new TweetDTO(
-                        item.get(TweetAuthorAttr).getS(),
-                        item.get(NameAttr).getS(),
-                        item.get(PhotoAttr).getS(),
+                        item.get(TweetAuthorHandleAttr).getS(),
+                        item.get(TweetAuthorNameAttr).getS(),
+                        item.get(TweetAuthorPhoto).getS(),
                         item.get(MessageAttr).getS(),
                         item.get(AttachmentAttr).getS(),
                         item.get(TimestampAttr).getS()

@@ -168,7 +168,7 @@ public class UserDAO extends GeneralDAO {
     }
 
     public FollowingResult getFollowing(String handle, int pageSize, String lastResult) {
-        // Get all the users whose following_handle equals the ${handle}
+        // Get all the users whose follower_handle equals the ${handle}
         FollowingResult result = new FollowingResult();
 
         Map<String, String> attrNames = new HashMap<String, String>();
@@ -199,7 +199,7 @@ public class UserDAO extends GeneralDAO {
                 UserDTO userDTO = new UserDTO(
                         item.get(FolloweeHandleAttr).getS(),
                         item.get(FolloweeNameAttr).getS(),
-                        s3.getUrl(bucketName, item.get(FolloweePhotoAttr).getS()).toExternalForm()
+                        s3.getUrl(bucketName, item.get(FollowerHandleAttr).getS()).toExternalForm()
                 );
                 result.addValue(userDTO);
             }
