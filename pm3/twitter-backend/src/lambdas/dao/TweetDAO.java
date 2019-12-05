@@ -26,7 +26,7 @@ public class TweetDAO extends GeneralDAO {
     private static final String NameAttr = "user_name";
     private static final String PhotoAttr = "user_photo";
 
-    private String timestamp =  new SimpleDateFormat("yyyyMMddHHmmssX").format(new Date());
+    private String timestamp =  new SimpleDateFormat("yyyyMMdd'T'HHmm'Z'").format(new Date());
 
     public TweetPostResult postTweet(TweetPostRequest request) {
         Table table = dynamoDB.getTable(TableName);
