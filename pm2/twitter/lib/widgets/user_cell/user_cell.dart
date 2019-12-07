@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/single_user_view/single_user_view.dart';
-import 'package:twitter/user_profile/user_profile_view.dart';
 
 class UserCell extends StatelessWidget {
   final User user;
@@ -32,7 +30,7 @@ class UserCell extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       CircleAvatar(
-                        backgroundImage: NetworkImage(user.picture),
+                        // backgroundImage: NetworkImage(user.picture),
                         radius: 80,
                       ),
                       Padding(

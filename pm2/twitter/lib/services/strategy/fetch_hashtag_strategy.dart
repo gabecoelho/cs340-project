@@ -6,15 +6,18 @@ class FetchHashtagStrategy extends FetchListStrategy {
   @override
   Future fetchList(AuthenticatedUser authenticatedUser) async {
     ServiceFacade serviceFacade = ServiceFacade();
-    final result = await serviceFacade.getHashtag("something");
+    //TODO: pass real hashtag here
+    final result = await serviceFacade.getHashtag("#test", 10, "");
 
     List list = authenticatedUser.hashtags;
+    list.clear();
     list.addAll(result.getList());
+
     authenticatedUser.hashtags = list;
 
     if (authenticatedUser.user.handle ==
-        UserModelSingleton().userModel.user.handle) {
-      UserModelSingleton().userModel = authenticatedUser;
+        AuthenticatedUserSingleton().authenticatedUser.user.handle) {
+      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
     }
     return authenticatedUser.hashtags;
   }

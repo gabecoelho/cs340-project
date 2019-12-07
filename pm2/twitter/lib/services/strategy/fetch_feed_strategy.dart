@@ -11,14 +11,18 @@ class FetchFeedStrategy implements FetchListStrategy {
     // return await mockTweetList.getFeed();
 
     ServiceFacade serviceFacade = ServiceFacade();
-    FeedResult result = await serviceFacade.getFeed("authenticatedUser.user");
+    FeedResult result =
+        await serviceFacade.getFeed(authenticatedUser.user.handle, 10, "");
+
     List list = authenticatedUser.feed;
+    list.clear();
     list.addAll(result.getList());
+
     authenticatedUser.feed = list;
 
     if (authenticatedUser.user.handle ==
-        UserModelSingleton().userModel.user.handle) {
-      UserModelSingleton().userModel = authenticatedUser;
+        AuthenticatedUserSingleton().authenticatedUser.user.handle) {
+      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
     }
 
     return authenticatedUser.feed;

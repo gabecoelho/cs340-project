@@ -10,41 +10,67 @@ import 'package:twitter/server_proxy/server_proxy.dart';
 import 'package:twitter/model/user.dart';
 
 class UserService {
-  ServerProxy serverProxy = ServerProxy();
+  static ServerProxy serverProxy = ServerProxy();
 
-  Future<dynamic> signUp(
-      String email, String password, String name, String handle) async {
-    return await serverProxy.signUp(email, password, name, handle);
+  CognitoUser _cognitoUser;
+  CognitoUserPool _userPool = serverProxy.getUserPool();
+  CognitoUserSession _session;
+  CognitoCredentials credentials;
+
+  Future<bool> init() async {
+    _cognitoUser = await _userPool.getCurrentUser();
+    if (_cognitoUser == null) {
+      return false;
+    }
+    _session = await _cognitoUser.getSession();
+    return _session != null ?? _session.isValid();
   }
 
-  Future<dynamic> signIn(String username, String password) async {
+  void setCognitoUser() async {
+    _cognitoUser = await _userPool.getCurrentUser();
+  }
+
+  Future<User> signUp(String email, String password, String name, String handle,
+      String pictureUrl) async {
+    final result = await serverProxy.signUp(
+        email, password, name, handle, pictureUrl.toString());
+    setCognitoUser();
+    return result;
+  }
+
+  Future<User> signIn(String username, String password) async {
     final signInResult = await serverProxy.signIn(username, password);
 
     if (signInResult != null) {
-      return new User.fromUserAttributes(signInResult);
+      setCognitoUser();
+      return signInResult;
     } else {
       return null;
     }
   }
 
-  void signOut(CognitoUser cognitoUser) {
-    return serverProxy.signOut(cognitoUser);
+  void signOut() {
+    return serverProxy.signOut();
   }
 
-  Future<UserResult> getUser(String username) async {
-    return await serverProxy.getUser(username);
+  Future<UserResult> getUser(String handle) async {
+    return await serverProxy.getUser(handle);
   }
 
-  Future<FollowersResult> getFollowers(String username) async {
-    return await serverProxy.getFollowers(username);
+  Future<FollowersResult> getFollowers(
+      String handle, int pageSize, String lastKey) async {
+    return await serverProxy.getFollowers(handle, pageSize, lastKey);
   }
 
-  Future<FollowingResult> getFollowing(String username) async {
-    return await serverProxy.getFollowing(username);
+  Future<FollowingResult> getFollowing(
+      String handle, int pageSize, String lastKey) async {
+    return await serverProxy.getFollowing(handle, pageSize, lastKey);
   }
 
-  Future<FollowResult> follow(String follower, String followee) async {
-    return await serverProxy.follow(follower, followee);
+  Future<FollowResult> follow(String follower, String followee,
+      String followerName, String followeeName) async {
+    return await serverProxy.follow(
+        follower, followee, followerName, followeeName);
   }
 
   Future<UnfollowResult> unfollow(String follower, String followee) async {
@@ -55,7 +81,13 @@ class UserService {
     return await serverProxy.follows(follower, followee);
   }
 
-  Future<PictureUploadResult> uploadPicture(String username) async {
-    return await serverProxy.uploadPicture(username);
+  Future<String> uploadPicture(
+      String handle, String base64EncodedString) async {
+    return await serverProxy.uploadPicture(handle, base64EncodedString);
+  }
+
+  Future<PictureUploadResult> editPicture(
+      String handle, String base64EncodedString) async {
+    return await serverProxy.editPicture(handle, base64EncodedString);
   }
 }

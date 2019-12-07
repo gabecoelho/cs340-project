@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,15 +19,13 @@ class UserProfileView extends StatefulWidget {
   final User user;
   bool isOtherUser = false;
 
-  // UserProfileView.empty(this.fetchListStrategy, this.user);
-
   UserProfileView({this.fetchListStrategy, this.user, this.isOtherUser});
 
   _UserProfileViewState createState() => _UserProfileViewState();
 }
 
 class _UserProfileViewState extends State<UserProfileView> {
-  UserModelSingleton userModelSingleton = UserModelSingleton();
+  AuthenticatedUserSingleton userModelSingleton = AuthenticatedUserSingleton();
 
   void changeProfileImage(
       ImageSource imageSource, ProfileBloc profileBloc) async {
@@ -66,21 +63,43 @@ class _UserProfileViewState extends State<UserProfileView> {
         children: <Widget>[
           InkWell(
             child: CircleAvatar(
-              backgroundImage: state is ProfilePictureChangedState
-                  ? FileImage(state.image)
-                  : NetworkImage(user.picture),
+              // backgroundImage: state is ProfilePictureChangedState
+              //     ? FileImage(state.image)
+              //     : NetworkImage(getUserSingletonPicture()),
+              backgroundImage: NetworkImage(
+                  (userModelSingleton.authenticatedUser.user.picture)
+                      .replaceAll("\"", "")),
               radius: 80,
             ),
             onTap: () {
-              print(widget.isOtherUser);
               if (isOtherUser == false)
                 changeProfileImage(ImageSource.gallery, profileBloc);
             },
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 3.0),
+            child: Text(
+              userModelSingleton.authenticatedUser.user.name,
+              style: TextStyle(fontSize: 40),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 3.0),
+            child: Text(
+              "@" + userModelSingleton.authenticatedUser.user.handle,
+              style: TextStyle(fontSize: 25),
+            ),
+          ),
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Followers"),
+              child: Text(
+                "Followers",
+                style: TextStyle(
+                  color: Colors.lightBlue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             onTap: () {
               Navigator.push(
@@ -93,7 +112,13 @@ class _UserProfileViewState extends State<UserProfileView> {
             },
           ),
           InkWell(
-            child: Text("Following"),
+            child: Text(
+              "Following",
+              style: TextStyle(
+                color: Colors.lightBlue,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -106,13 +131,9 @@ class _UserProfileViewState extends State<UserProfileView> {
           ),
           Divider(),
           Expanded(
-            child: SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: TwitterListView<Tweet>(
-                fetchListStrategy: FetchStoryStrategy(),
-                authenticatedUser: userModelSingleton.userModel,
-              ),
+            child: TwitterListView<Tweet>(
+              fetchListStrategy: FetchStoryStrategy(),
+              authenticatedUser: userModelSingleton.authenticatedUser,
             ),
           ),
         ],

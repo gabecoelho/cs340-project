@@ -6,7 +6,6 @@ import 'package:twitter/model/user.dart';
 import 'package:twitter/new_tweet/new_tweet_view.dart';
 import 'package:twitter/services/strategy/fetch_feed_strategy.dart';
 import 'package:twitter/services/strategy/fetch_followers_strategy.dart';
-import 'package:twitter/services/strategy/fetch_story_strategy.dart';
 import 'package:twitter/services/strategy/fetch_following_strategy.dart';
 import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
@@ -17,7 +16,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  UserModelSingleton userModelSingleton = UserModelSingleton();
+  AuthenticatedUserSingleton userModelSingleton = AuthenticatedUserSingleton();
 
   int currentIndex = 0;
 
@@ -72,21 +71,21 @@ class _HomeViewState extends State<HomeView> {
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<Tweet>(
                     fetchListStrategy: FetchFeedStrategy(),
-                    authenticatedUser: userModelSingleton.userModel,
+                    authenticatedUser: userModelSingleton.authenticatedUser,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowingStrategy(),
-                    authenticatedUser: userModelSingleton.userModel,
+                    authenticatedUser: userModelSingleton.authenticatedUser,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowersStrategy(),
-                    authenticatedUser: userModelSingleton.userModel,
+                    authenticatedUser: userModelSingleton.authenticatedUser,
                   ),
                 ),
               ],
@@ -97,7 +96,6 @@ class _HomeViewState extends State<HomeView> {
                 size: 30,
                 color: Colors.white,
               ),
-              //TODO: go to the new tweet view
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => NewTweetView()));

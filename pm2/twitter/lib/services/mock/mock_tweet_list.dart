@@ -13,7 +13,7 @@ class MockTweetList {
     Tweet hashtagTweet = Tweet(
       handle: "@johndoe",
       message: "This is a message with a #hashtag",
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toIso8601String(),
       picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
     );
@@ -21,7 +21,7 @@ class MockTweetList {
     Tweet aliasTweet = Tweet(
       handle: "@mikeshinoda",
       message: "saying hello to @johndoe",
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toIso8601String(),
       picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/2_placeholder.png',
     );
@@ -29,7 +29,7 @@ class MockTweetList {
     Tweet attachmentTweet = Tweet(
       handle: "@eddy",
       message: "an attachment",
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toIso8601String(),
       picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/3_placeholder.png',
       attachment:
@@ -48,7 +48,7 @@ class MockTweetList {
     Tweet mySecondTweet = Tweet(
       handle: "@johndoe",
       message: "This is my second tweet",
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toIso8601String(),
       picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
     );
@@ -56,7 +56,7 @@ class MockTweetList {
     Tweet myFirstTweet = Tweet(
       handle: "@johndoe",
       message: "This is my first tweet",
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now().toIso8601String(),
       picture:
           '/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png',
     );

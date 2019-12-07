@@ -12,7 +12,7 @@ class HashtagView extends StatefulWidget {
 }
 
 class _HashtagViewState extends State<HashtagView> {
-  UserModelSingleton userModelSingleton = UserModelSingleton();
+  AuthenticatedUserSingleton userModelSingleton = AuthenticatedUserSingleton();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class _HashtagViewState extends State<HashtagView> {
       body: Container(
         child: TwitterListView<Tweet>(
           fetchListStrategy: FetchHashtagStrategy(),
-          authenticatedUser: userModelSingleton.userModel,
+          authenticatedUser: userModelSingleton.authenticatedUser,
         ),
       ),
     );

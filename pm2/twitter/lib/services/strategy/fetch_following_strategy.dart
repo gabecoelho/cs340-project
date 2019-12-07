@@ -11,17 +11,19 @@ class FetchFollowingStrategy implements FetchListStrategy {
     // return await mockUserList.getFollowing();
 
     ServiceFacade serviceFacade = ServiceFacade();
-    final result = await serviceFacade.getFollowing("username");
+    final result =
+        await serviceFacade.getFollowing(authenticatedUser.user.handle, 10, "");
 
     List list = authenticatedUser.following;
+    list.clear();
     list.addAll(result.getList());
+
     authenticatedUser.following = list;
 
     if (authenticatedUser.user.handle ==
-        UserModelSingleton().userModel.user.handle) {
-      UserModelSingleton().userModel = authenticatedUser;
+        AuthenticatedUserSingleton().authenticatedUser.user.handle) {
+      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
     }
-
     return authenticatedUser.following;
   }
 }

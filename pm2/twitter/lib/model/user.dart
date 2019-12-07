@@ -14,9 +14,9 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        name: json["name"],
-        handle: json["handle"],
-        picture: json["picture"],
+        name: json["userName"],
+        handle: json["userHandle"],
+        picture: json["userPicture"],
       );
 
   /// Decode user from Cognito User Attributes
@@ -25,8 +25,10 @@ class User {
     attributes.forEach((attribute) {
       if (attribute.getName() == 'name') {
         user.name = attribute.getValue();
-      } else if (attribute.getName() == 'nickname') {
+      } else if (attribute.getName() == 'preferred_username') {
         user.handle = attribute.getValue();
+      } else if (attribute.getName() == 'picture') {
+        user.picture = attribute.getValue();
       }
     });
     return user;

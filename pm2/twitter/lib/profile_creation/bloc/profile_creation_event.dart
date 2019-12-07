@@ -16,15 +16,18 @@ class ProfileSubmitPressedEvent extends ProfileEvent {
   final String password;
   final String name;
   final String handle;
+  final String base64EncodedString;
 
   ProfileSubmitPressedEvent(
       {@required this.email,
       @required this.password,
       @required this.name,
-      @required this.handle});
+      @required this.handle,
+      @required this.base64EncodedString});
 
   @override
-  List<Object> get props => [email, password, name, handle];
+  List<Object> get props =>
+      [email, password, name, handle, base64EncodedString];
 }
 
 class ProfilePictureChangedEvent extends ProfileEvent {

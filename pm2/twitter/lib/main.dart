@@ -8,6 +8,7 @@ import 'package:twitter/auth/signup/bloc/signup_bloc.dart';
 import 'package:twitter/home/bloc/bloc.dart';
 import 'package:twitter/main_view/main_view.dart';
 import 'package:twitter/profile_creation/bloc/bloc.dart';
+import 'package:twitter/settings_view/bloc/settings_view_bloc.dart';
 
 import 'auth/signup/signup_view.dart';
 import 'new_tweet/bloc/new_tweet_bloc.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<NewTweetBloc>(
           builder: (context) => NewTweetBloc(),
         ),
+        BlocProvider<SettingsViewBloc>(
+          builder: (context) => SettingsViewBloc(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -10,15 +10,22 @@ class FetchStoryStrategy implements FetchListStrategy {
     // MockTweetList mockTweetList = MockTweetList();
     // return await mockTweetList.getStory();
     ServiceFacade serviceFacade = ServiceFacade();
-    final result = await serviceFacade.getStory("username");
+
+    // String lastKey = authenticatedUser.story.last.timestamp;
+
+    final result =
+        await serviceFacade.getStory(authenticatedUser.user.handle, 5, "");
 
     List list = authenticatedUser.story;
+    list.clear();
     list.addAll(result.getList());
+    // list.sort((a, b) => a.compareTo(b));
+
     authenticatedUser.story = list;
 
     if (authenticatedUser.user.handle ==
-        UserModelSingleton().userModel.user.handle) {
-      UserModelSingleton().userModel = authenticatedUser;
+        AuthenticatedUserSingleton().authenticatedUser.user.handle) {
+      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
     }
     return authenticatedUser.story;
   }

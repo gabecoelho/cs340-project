@@ -6,7 +6,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/hashtag/hashtag_view.dart';
 import 'package:twitter/model/authenticated_user.dart';
-import 'package:twitter/model/http_response_models/general_result.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/services/strategy/fetch_list_strategy.dart';
@@ -75,7 +74,6 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
       child: BlocBuilder(
         bloc: _bloc,
         builder: (context, state) {
-          print(state.toString());
           if (state is TwitterListViewLoadedState ||
               state is TwitterListViewRefreshedState) {
             return SmartRefresher(
@@ -121,6 +119,7 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
                     );
                   } else {
                     final user = state.list[i];
+                    print(user.picture);
                     return UserCell(
                       user: user,
                     );
@@ -139,6 +138,7 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
 
   @override
   void hashtagTapped(String hashtag) {
+    //TODO: get Hashtag
     Navigator.push(
       context,
       MaterialPageRoute(
