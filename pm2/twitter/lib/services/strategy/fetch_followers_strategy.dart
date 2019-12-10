@@ -1,30 +1,36 @@
 import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/model/authenticated_user.dart';
+import 'package:twitter/model/user.dart';
 import 'package:twitter/services/mock/mock_user_list.dart';
 
 import 'fetch_list_strategy.dart';
 
 class FetchFollowersStrategy implements FetchListStrategy {
+  AuthenticatedUserSingleton authenticatedUserSingleton =
+      AuthenticatedUserSingleton();
+
+  ServiceFacade serviceFacade = ServiceFacade();
   @override
-  Future fetchList(AuthenticatedUser authenticatedUser) async {
+  Future fetchList(User user) async {
     // MockUserList mockUserList = MockUserList();
     // return await mockUserList.getFollowers();
 
-    ServiceFacade serviceFacade = ServiceFacade();
-    final result =
-        await serviceFacade.getFollowers(authenticatedUser.user.handle, 10, "");
+    final result = await serviceFacade.getFollowers(user.handle, 10,
+        authenticatedUserSingleton.authenticatedUser.followersLastKey);
 
-    List list = authenticatedUser.followers;
-    list.clear();
+    authenticatedUserSingleton.authenticatedUser.followersLastKey =
+        result.lastKey;
+
+    List list = authenticatedUserSingleton.authenticatedUser.followers;
     list.addAll(result.getList());
 
-    authenticatedUser.followers = list;
+    authenticatedUserSingleton.authenticatedUser.followers = list;
 
-    if (authenticatedUser.user.handle ==
+    if (authenticatedUserSingleton.authenticatedUser.user.handle ==
         AuthenticatedUserSingleton().authenticatedUser.user.handle) {
-      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
+      AuthenticatedUserSingleton().authenticatedUser =
+          authenticatedUserSingleton.authenticatedUser;
     }
-
-    return authenticatedUser.followers;
+    return authenticatedUserSingleton.authenticatedUser.followers;
   }
 }

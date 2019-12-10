@@ -85,9 +85,4 @@ class UserService {
       String handle, String base64EncodedString) async {
     return await serverProxy.uploadPicture(handle, base64EncodedString);
   }
-
-  Future<PictureUploadResult> editPicture(
-      String handle, String base64EncodedString) async {
-    return await serverProxy.editPicture(handle, base64EncodedString);
-  }
 }

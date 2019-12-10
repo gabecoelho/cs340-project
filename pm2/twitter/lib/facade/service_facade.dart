@@ -57,12 +57,6 @@ class ServiceFacade {
     return response;
   }
 
-  Future<PictureUploadResult> editPicture(
-      String handle, String base64EncodedImage) async {
-    final response = await _userService.editPicture(handle, base64EncodedImage);
-    return response;
-  }
-
   Future<FeedResult> getFeed(
       String handle, int pageSize, String lastKey) async {
     final response = await _tweetService.getFeed(handle, pageSize, lastKey);

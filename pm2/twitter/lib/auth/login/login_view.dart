@@ -62,9 +62,6 @@ class _LoginViewState extends State<LoginView> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
               child: TextFormField(
-                // validator: (String value) {
-                //   return validateHandle(value);
-                // },
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     // hintText: "Handle",

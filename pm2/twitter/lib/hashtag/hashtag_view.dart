@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:twitter/model/authenticated_user.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/services/strategy/fetch_hashtag_strategy.dart';
+import 'package:twitter/widgets/twitter_list_view/bloc/twitter_list_view_state.dart';
 import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
 class HashtagView extends StatefulWidget {
-  HashtagView({Key key}) : super(key: key);
+  List<Tweet> hashtags;
+
+  HashtagView({@required this.hashtags});
 
   @override
   _HashtagViewState createState() => _HashtagViewState();
@@ -13,6 +16,13 @@ class HashtagView extends StatefulWidget {
 
 class _HashtagViewState extends State<HashtagView> {
   AuthenticatedUserSingleton userModelSingleton = AuthenticatedUserSingleton();
+  TwitterListViewState twitterListViewState;
+
+  @override
+  void initState() {
+    twitterListViewState = TwitterListViewHashtagTappedState(widget.hashtags);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +31,7 @@ class _HashtagViewState extends State<HashtagView> {
       body: Container(
         child: TwitterListView<Tweet>(
           fetchListStrategy: FetchHashtagStrategy(),
-          authenticatedUser: userModelSingleton.authenticatedUser,
+          user: userModelSingleton.authenticatedUser.user,
         ),
       ),
     );

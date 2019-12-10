@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/model/authenticated_user.dart';
-import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
-import 'package:twitter/profile_creation/bloc/profile_creation_bloc.dart';
-import 'package:twitter/profile_creation/bloc/profile_creation_event.dart';
 import 'package:twitter/services/strategy/fetch_story_strategy.dart';
 import 'package:twitter/single_user_view/bloc/bloc.dart';
 import 'package:twitter/user_profile/user_profile_view.dart';
+import 'package:twitter/widgets/twitter_list_view/bloc/twitter_list_view_state.dart';
 import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
 class SingleUserView extends StatefulWidget {
@@ -22,11 +19,20 @@ class SingleUserView extends StatefulWidget {
 }
 
 class _SingleUserViewState extends State<SingleUserView> {
+  TwitterListViewState twitterListViewState;
+  SingleUserViewBloc _singleUserViewBloc;
+  AuthenticatedUserSingleton authenticatedUserSingleton =
+      AuthenticatedUserSingleton();
+  RegExp regex = new RegExp(r"([^@]+)");
+
   @override
   void initState() {
-    final _singleUserViewBloc = BlocProvider.of<SingleUserViewBloc>(context);
+    _singleUserViewBloc = BlocProvider.of<SingleUserViewBloc>(context);
+    twitterListViewState = TwitterListViewUserTappedState(widget.user);
 
-    _singleUserViewBloc.add(SingleUserViewCheckFollowsEvent());
+    _singleUserViewBloc.add(SingleUserViewCheckFollowsEvent(
+        follower: authenticatedUserSingleton.authenticatedUser.user.handle,
+        followee: widget.user.handle));
     super.initState();
   }
 
@@ -88,7 +94,24 @@ class _SingleUserViewState extends State<SingleUserView> {
         style: TextStyle(color: Colors.white, fontSize: 16),
       ),
       color: Colors.lightBlue,
-      onPressed: () {},
+      onPressed: () {
+        if (state is SingleUserViewShowFollowState) {
+          _singleUserViewBloc.add(SingleUserViewFollowEvent(
+              follower:
+                  authenticatedUserSingleton.authenticatedUser.user.handle,
+              followerName:
+                  authenticatedUserSingleton.authenticatedUser.user.name,
+              followee: this.widget.user.handle,
+              followeeName: this.widget.user.name));
+        } else if (state is SingleUserViewShowUnfollowState) {
+          _singleUserViewBloc.add(
+            SingleUserViewUnfollowEvent(
+                follower:
+                    authenticatedUserSingleton.authenticatedUser.user.handle,
+                followee: regex.stringMatch(this.widget.user.handle)),
+          );
+        }
+      },
       shape: RoundedRectangleBorder(
         borderRadius: new BorderRadius.circular(18.0),
       ),

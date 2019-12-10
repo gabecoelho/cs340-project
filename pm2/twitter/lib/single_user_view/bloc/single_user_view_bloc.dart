@@ -16,6 +16,7 @@ class SingleUserViewBloc
     SingleUserViewEvent event,
   ) async* {
     if (event is SingleUserViewCheckFollowsEvent) {
+
       FollowsResult followsResult =
           await serviceFacade.follows(event.follower, event.followee);
 
@@ -28,7 +29,6 @@ class SingleUserViewBloc
     if (event is SingleUserViewFollowEvent) {
       await serviceFacade.follow(event.follower, event.followee,
           event.followerName, event.followeeName);
-
       yield SingleUserViewShowUnfollowState();
     }
     if (event is SingleUserViewUnfollowEvent) {

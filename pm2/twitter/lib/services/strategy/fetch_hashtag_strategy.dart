@@ -1,24 +1,30 @@
 import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/model/authenticated_user.dart';
+import 'package:twitter/model/user.dart';
 import 'package:twitter/services/strategy/fetch_list_strategy.dart';
 
 class FetchHashtagStrategy extends FetchListStrategy {
+  AuthenticatedUserSingleton authenticatedUserSingleton =
+      AuthenticatedUserSingleton();
+  ServiceFacade serviceFacade = ServiceFacade();
   @override
-  Future fetchList(AuthenticatedUser authenticatedUser) async {
-    ServiceFacade serviceFacade = ServiceFacade();
-    //TODO: pass real hashtag here
-    final result = await serviceFacade.getHashtag("#test", 10, "");
+  Future fetchList(User user) async {
+    final result = await serviceFacade.getHashtag(user.hashtag, 10,
+        authenticatedUserSingleton.authenticatedUser.hashtagsLastKey);
 
-    List list = authenticatedUser.hashtags;
-    list.clear();
+    authenticatedUserSingleton.authenticatedUser.hashtagsLastKey =
+        result.lastKey;
+
+    List list = authenticatedUserSingleton.authenticatedUser.hashtags;
     list.addAll(result.getList());
 
-    authenticatedUser.hashtags = list;
+    authenticatedUserSingleton.authenticatedUser.hashtags = list;
 
-    if (authenticatedUser.user.handle ==
+    if (authenticatedUserSingleton.authenticatedUser.user.handle ==
         AuthenticatedUserSingleton().authenticatedUser.user.handle) {
-      AuthenticatedUserSingleton().authenticatedUser = authenticatedUser;
+      AuthenticatedUserSingleton().authenticatedUser =
+          authenticatedUserSingleton.authenticatedUser;
     }
-    return authenticatedUser.hashtags;
+    return authenticatedUserSingleton.authenticatedUser.hashtags;
   }
 }

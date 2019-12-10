@@ -101,8 +101,16 @@ class ServerProxy {
 
   Future<HashtagResult> getHashtag(
       String hashtag, int pageSize, String lastKey) async {
-    final response = await http
-        .get('$baseUrl/status/$hashtag?pageSize=$pageSize&lastKey=$lastKey');
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Accept": "application/json"
+    };
+
+    final String reqUrl =
+        "$baseUrl/status/hashtag/$hashtag?pageSize=$pageSize&lastKey=$lastKey";
+    print(reqUrl);
+    final response = await http.get(reqUrl, headers: headers);
+    print(response.body);
     return hashtagResultFromJson(response.body);
   }
 
@@ -110,6 +118,7 @@ class ServerProxy {
       String handle, int pageSize, String lastKey) async {
     final response = await http
         .get("$baseUrl/user/$handle/feed?pageSize=$pageSize&lastKey=$lastKey");
+    print(response.body);
     return feedResultFromJson(response.body);
   }
 
@@ -125,6 +134,7 @@ class ServerProxy {
       String handle, int pageSize, String lastKey) async {
     final response = await http.get(
         "$baseUrl/user/$handle/followers?pageSize=$pageSize&lastKey=$lastKey");
+    print(response.body);
     return followersResultFromJson(response.body);
   }
 
@@ -132,26 +142,38 @@ class ServerProxy {
       String handle, int pageSize, String lastKey) async {
     final response = await http.get(
         "$baseUrl/user/$handle/following?pageSize=$pageSize&lastKey=$lastKey");
+    print(response.body);
     return followingResultFromJson(response.body);
   }
 
   Future<FollowResult> follow(String followerHandle, String followeeHandle,
       String followerName, String followeeName) async {
-    final reqBody = {
-      "follower_name": followerName,
-      "followee_name": followeeName
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Accept": "application/json"
     };
+    final reqBody =
+        '{ "follower_name": "$followerName", "followee_name": "$followeeName" }';
     final response = await http.post(
         "$baseUrl/user/$followerHandle/follow/$followeeHandle",
+        headers: headers,
         body: reqBody);
     print(response.body);
     return followResultFromJson(response.body);
   }
 
   Future<UnfollowResult> unfollow(String follower, String followee) async {
-    final reqBody = {'follower_handle': follower, 'followee_handle': followee};
-    final response = await http
-        .post("$baseUrl/user/$follower/unfollow/$followee", body: reqBody);
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Accept": "application/json"
+    };
+    final reqBody =
+        '{"follower_handle": "$follower", "followee_handle": "$followee"}';
+
+    final response = await http.post(
+        "$baseUrl/user/$follower/unfollow/$followee",
+        headers: headers,
+        body: reqBody);
 
     print(response.body);
     return unfollowResultFromJson(response.body);
@@ -196,18 +218,6 @@ class ServerProxy {
 
     print(response.body);
     return postTweetResultFromJson(response.body);
-  }
-
-  Future<PictureUploadResult> editPicture(
-      String handle, String base64EncodedString) async {
-    final reqBody = {
-      "handle": handle,
-      "base64EncodedString": base64EncodedString
-    };
-    final response =
-        await http.patch("$baseUrl/user/$handle/edit/picture", body: reqBody);
-    print(response.body);
-    return pictureUploadResultFromJson(response.body);
   }
 
   Future<String> uploadPicture(

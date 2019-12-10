@@ -4,18 +4,23 @@ import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 
-class AuthenticatedUser {
+class UserModel {
   User user = User();
   List<Tweet> feed = [];
   List<Tweet> story = [];
+  List<Tweet> hashtags = [];
   List<User> followers = [];
   List<User> following = [];
-  List<Tweet> hashtags = [];
+  String feedLastKey = "";
+  String storyLastKey = "";
+  String followersLastKey = "";
+  String followingLastKey = "";
+  String hashtagsLastKey = "";
 }
 
 //Authenticated User Singleton
 class AuthenticatedUserSingleton {
-  AuthenticatedUser authenticatedUser;
+  UserModel authenticatedUser;
 
   static final AuthenticatedUserSingleton _instance =
       AuthenticatedUserSingleton._internal();
@@ -25,6 +30,6 @@ class AuthenticatedUserSingleton {
   }
 
   AuthenticatedUserSingleton._internal() {
-    authenticatedUser = AuthenticatedUser();
+    authenticatedUser = UserModel();
   }
 }

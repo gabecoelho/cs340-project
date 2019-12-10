@@ -63,12 +63,11 @@ class _UserProfileViewState extends State<UserProfileView> {
         children: <Widget>[
           InkWell(
             child: CircleAvatar(
-              // backgroundImage: state is ProfilePictureChangedState
-              //     ? FileImage(state.image)
-              //     : NetworkImage(getUserSingletonPicture()),
-              backgroundImage: NetworkImage(
-                  (userModelSingleton.authenticatedUser.user.picture)
-                      .replaceAll("\"", "")),
+              backgroundImage: isOtherUser != true
+                  ? NetworkImage(
+                      (userModelSingleton.authenticatedUser.user.picture)
+                          .replaceAll("\"", ""))
+                  : NetworkImage(widget.user.picture.replaceAll("\"", "")),
               radius: 80,
             ),
             onTap: () {
@@ -78,17 +77,27 @@ class _UserProfileViewState extends State<UserProfileView> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 3.0),
-            child: Text(
-              userModelSingleton.authenticatedUser.user.name,
-              style: TextStyle(fontSize: 40),
-            ),
+            child: isOtherUser != true
+                ? Text(
+                    userModelSingleton.authenticatedUser.user.name,
+                    style: TextStyle(fontSize: 40),
+                  )
+                : Text(
+                    widget.user.name,
+                    style: TextStyle(fontSize: 40),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 3.0),
-            child: Text(
-              "@" + userModelSingleton.authenticatedUser.user.handle,
-              style: TextStyle(fontSize: 25),
-            ),
+            child: isOtherUser != true
+                ? Text(
+                    "@" + userModelSingleton.authenticatedUser.user.handle,
+                    style: TextStyle(fontSize: 25),
+                  )
+                : Text(
+                    "@" + widget.user.handle,
+                    style: TextStyle(fontSize: 25),
+                  ),
           ),
           InkWell(
             child: Padding(
@@ -106,7 +115,9 @@ class _UserProfileViewState extends State<UserProfileView> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => UserFollowView(
-                      fetchListStrategy: FetchFollowersStrategy()),
+                    fetchListStrategy: FetchFollowersStrategy(),
+                    user: user,
+                  ),
                 ),
               );
             },
@@ -124,7 +135,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => UserFollowView(
-                      fetchListStrategy: FetchFollowingStrategy()),
+                      fetchListStrategy: FetchFollowingStrategy(), user: user),
                 ),
               );
             },
@@ -133,7 +144,9 @@ class _UserProfileViewState extends State<UserProfileView> {
           Expanded(
             child: TwitterListView<Tweet>(
               fetchListStrategy: FetchStoryStrategy(),
-              authenticatedUser: userModelSingleton.authenticatedUser,
+              user: isOtherUser == true
+                  ? widget.user
+                  : userModelSingleton.authenticatedUser.user,
             ),
           ),
         ],

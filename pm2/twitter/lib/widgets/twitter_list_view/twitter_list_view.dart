@@ -23,12 +23,10 @@ abstract class TweetInterface {
 
 class TwitterListView<T> extends StatefulWidget {
   final FetchListStrategy fetchListStrategy;
-  final AuthenticatedUser authenticatedUser;
+  final User user;
 
   const TwitterListView(
-      {Key key,
-      @required this.fetchListStrategy,
-      @required this.authenticatedUser})
+      {Key key, @required this.fetchListStrategy, @required this.user})
       : super(key: key);
 
   @override
@@ -38,14 +36,14 @@ class TwitterListView<T> extends StatefulWidget {
 class _TwitterListViewState<T> extends State<TwitterListView<T>>
     implements TweetInterface {
   TwitterListViewBloc _bloc;
+  RegExp regex = new RegExp(r"([^@]+)");
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    _bloc = TwitterListViewBloc<T>(
-        widget.fetchListStrategy, widget.authenticatedUser);
+    _bloc = TwitterListViewBloc<T>(widget.fetchListStrategy, widget.user);
     _bloc.add(TwitterListViewFetchListEvent());
     super.initState();
   }
@@ -71,98 +69,103 @@ class _TwitterListViewState<T> extends State<TwitterListView<T>>
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (context) => _bloc,
-      child: BlocBuilder(
+      child: BlocListener(
         bloc: _bloc,
-        builder: (context, state) {
-          if (state is TwitterListViewLoadedState ||
-              state is TwitterListViewRefreshedState) {
-            return SmartRefresher(
-              enableTwoLevel: true,
-              controller: _refreshController,
-              // onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              // enablePullDown: true,
-              enablePullUp: true,
-              // header: WaterDropHeader(),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = Text("Pull to load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = CircularProgressIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    body = Text("Load Failed! Click to retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = Text("Release to load");
-                  } else {
-                    body = Text("No more Data");
-                  }
-                  return Container(
-                    height: 55.0,
-                    child: Center(child: body),
-                  );
-                },
+        listener: (context, state) {
+          if (state is TwitterListViewUserTappedState) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SingleUserView(
+                  user: state.user,
+                  column: Column(),
+                ),
               ),
-              child: ListView.builder(
-                itemCount: state.list.length,
-                itemBuilder: (context, i) {
-                  if (T == Tweet) {
-                    final tweet = state.list[i];
-                    return TweetCell(
-                      handle: tweet.handle,
-                      message: tweet.message,
-                      timestamp: tweet.timestamp.toString(),
-                      picture: tweet.picture,
-                      attachment: tweet.attachment,
-                      tweetInterface: this,
-                    );
-                  } else {
-                    final user = state.list[i];
-                    print(user.picture);
-                    return UserCell(
-                      user: user,
-                    );
-                  }
-                },
-              ),
-              // ),
             );
-          } else {
-            return Container();
+          } else if (state is TwitterListViewHashtagTappedState) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HashtagView(
+                  hashtags: state.hashtags,
+                ),
+              ),
+            );
           }
         },
+        child: BlocBuilder(
+          bloc: _bloc,
+          builder: (context, state) {
+            if (state is TwitterListViewLoadedState ||
+                state is TwitterListViewRefreshedState) {
+              return SmartRefresher(
+                enableTwoLevel: true,
+                controller: _refreshController,
+                // onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                // enablePullDown: true,
+                enablePullUp: true,
+                // header: WaterDropHeader(),
+                footer: CustomFooter(
+                  builder: (BuildContext context, LoadStatus mode) {
+                    Widget body;
+                    if (mode == LoadStatus.idle) {
+                      body = Text("Pull to load");
+                    } else if (mode == LoadStatus.loading) {
+                      body = CircularProgressIndicator();
+                    } else if (mode == LoadStatus.failed) {
+                      body = Text("Load Failed! Click to retry!");
+                    } else if (mode == LoadStatus.canLoading) {
+                      body = Text("Release to load");
+                    } else {
+                      body = Text("No more Data");
+                    }
+                    return Container(
+                      height: 55.0,
+                      child: Center(child: body),
+                    );
+                  },
+                ),
+                child: ListView.builder(
+                  itemCount: state.list.length,
+                  itemBuilder: (context, i) {
+                    if (T == Tweet) {
+                      final tweet = state.list[i];
+                      return TweetCell(
+                        handle: tweet.handle,
+                        message: tweet.message,
+                        timestamp: tweet.timestamp.toString(),
+                        picture: tweet.picture,
+                        attachment: tweet.attachment,
+                        tweetInterface: this,
+                      );
+                    } else {
+                      final user = state.list[i];
+                      return UserCell(
+                        user: user,
+                      );
+                    }
+                  },
+                ),
+                // ),
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }
 
   @override
   void hashtagTapped(String hashtag) {
-    //TODO: get Hashtag
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HashtagView(),
-      ),
-    );
+    _bloc.add(TwitterListViewHashtagTappedEvent(hashtag: hashtag));
   }
 
   @override
-  void userTapped(String handle) {
-    //TODO: get User
-    User user = User(
-      name: "John Doe",
-      handle: handle,
-      picture: "",
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SingleUserView(
-          user: user,
-          column: Column(),
-        ),
-      ),
-    );
+  void userTapped(String handle) async {
+    _bloc
+        .add(TwitterListViewUserTappedEvent(handle: regex.stringMatch(handle)));
   }
 }

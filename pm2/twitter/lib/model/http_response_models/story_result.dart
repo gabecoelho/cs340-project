@@ -14,17 +14,17 @@ String storyResultToJson(StoryResult data) => json.encode(data.toJson());
 
 class StoryResult extends GeneralResult {
   List<Tweet> story;
+  String lastKey;
 
-  StoryResult({
-    this.story,
-  });
+  StoryResult({this.story, this.lastKey});
 
   factory StoryResult.fromJson(Map<String, dynamic> json) => StoryResult(
-        story: List<Tweet>.from(json["story"].map((x) => Tweet.fromJson(x))),
-      );
+      story: List<Tweet>.from(json["story"].map((x) => Tweet.fromJson(x))),
+      lastKey: json["lastKey"]);
 
   Map<String, dynamic> toJson() => {
         "story": List<dynamic>.from(story.map((x) => x.toJson())),
+        "lastKey": lastKey
       };
 
   @override

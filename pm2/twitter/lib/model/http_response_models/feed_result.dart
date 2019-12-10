@@ -14,18 +14,17 @@ String feedResultToJson(FeedResult data) => json.encode(data.toJson());
 
 class FeedResult extends GeneralResult {
   List<Tweet> feed;
+  String lastKey;
 
-  FeedResult({
-    this.feed,
-  });
+  FeedResult({this.feed, this.lastKey});
 
   factory FeedResult.fromJson(Map<String, dynamic> json) => FeedResult(
-        feed: List<Tweet>.from(
-          json["feed"].map(
-            (x) => Tweet.fromJson(x),
-          ),
+      feed: List<Tweet>.from(
+        json["feed"].map(
+          (x) => Tweet.fromJson(x),
         ),
-      );
+      ),
+      lastKey: json["lastKey"]);
 
   Map<String, dynamic> toJson() => {
         "feed": List<dynamic>.from(
@@ -33,6 +32,7 @@ class FeedResult extends GeneralResult {
             (x) => x.toJson(),
           ),
         ),
+        "lastKey": lastKey
       };
 
   @override

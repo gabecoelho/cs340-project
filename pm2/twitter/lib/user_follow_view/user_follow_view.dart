@@ -7,8 +7,9 @@ import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
 class UserFollowView extends StatelessWidget {
   final FetchListStrategy fetchListStrategy;
+  User user;
 
-  UserFollowView({this.fetchListStrategy}) : super();
+  UserFollowView({this.fetchListStrategy, this.user}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +20,18 @@ class UserFollowView extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: fetchListStrategy is FetchFollowingStrategy
               ? TwitterListView<User>(
-                  fetchListStrategy: FetchFollowingStrategy())
+                  fetchListStrategy: FetchFollowingStrategy(),
+                  user: user,
+                )
               : TwitterListView<User>(
-                  fetchListStrategy: FetchFollowersStrategy()),
+                  fetchListStrategy: FetchFollowersStrategy(), user: user),
         ),
       ),
     );
   }
 
   Widget _buildAppBar(BuildContext context) {
+    print("user handle in user follow view: " + user.handle);
     return AppBar(
       automaticallyImplyLeading: true,
       leading: IconButton(

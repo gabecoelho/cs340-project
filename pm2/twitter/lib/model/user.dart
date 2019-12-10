@@ -6,6 +6,7 @@ class User {
   String name;
   String handle;
   String picture;
+  String hashtag;
 
   User({
     this.name,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twitter/model/user.dart';
 
 abstract class TwitterListViewState extends Equatable {
   const TwitterListViewState();
@@ -24,4 +25,22 @@ class TwitterListViewRefreshedState<T> extends TwitterListViewState {
 
   @override
   List<Object> get props => list;
+}
+
+class TwitterListViewUserTappedState extends TwitterListViewState {
+  final User user;
+
+  TwitterListViewUserTappedState(this.user) : super();
+
+  @override
+  List<Object> get props => [user];
+}
+
+class TwitterListViewHashtagTappedState<T> extends TwitterListViewState {
+  final List<T> hashtags;
+
+  TwitterListViewHashtagTappedState(this.hashtags) : super();
+
+  @override
+  List<Object> get props => hashtags;
 }

@@ -15,10 +15,9 @@ String hashtagResultToJson(HashtagResult data) => json.encode(data.toJson());
 
 class HashtagResult extends GeneralResult {
   List<Tweet> hashtags;
+  String lastKey;
 
-  HashtagResult({
-    this.hashtags,
-  });
+  HashtagResult({this.hashtags, this.lastKey});
 
   factory HashtagResult.fromJson(Map<String, dynamic> json) => HashtagResult(
         hashtags: List<Tweet>.from(
@@ -26,10 +25,12 @@ class HashtagResult extends GeneralResult {
             (x) => Tweet.fromJson(x),
           ),
         ),
+        lastKey: json["lastKey"],
       );
 
   Map<String, dynamic> toJson() => {
         "hashtags": List<dynamic>.from(hashtags.map((x) => x.toJson())),
+        "lastKey": lastKey
       };
 
   @override

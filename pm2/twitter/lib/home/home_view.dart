@@ -71,21 +71,21 @@ class _HomeViewState extends State<HomeView> {
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<Tweet>(
                     fetchListStrategy: FetchFeedStrategy(),
-                    authenticatedUser: userModelSingleton.authenticatedUser,
+                    user: userModelSingleton.authenticatedUser.user,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowingStrategy(),
-                    authenticatedUser: userModelSingleton.authenticatedUser,
+                    user: userModelSingleton.authenticatedUser.user,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: TwitterListView<User>(
                     fetchListStrategy: FetchFollowersStrategy(),
-                    authenticatedUser: userModelSingleton.authenticatedUser,
+                    user: userModelSingleton.authenticatedUser.user,
                   ),
                 ),
               ],
