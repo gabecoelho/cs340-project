@@ -10,6 +10,9 @@ import java.util.*;
 import com.amazonaws.services.dynamodbv2.model.*;
 
 import lambdas.dto.TweetDTO;
+import lambdas.dto.UserDTO;
+import lambdas.feed.AddToFeedRequest;
+import lambdas.followers.FollowersResult;
 import lambdas.hashtag.HashtagResult;
 import lambdas.story.StoryResult;
 import lambdas.tweetPoster.TweetPostRequest;
@@ -17,8 +20,14 @@ import lambdas.tweetPoster.TweetPostResult;
 
 public class TweetDAO extends GeneralDAO {
 
+    // Feed table information
+    private static final String FeedTableName = "feed";
+    private static final String TweetAuthorHandleAttr = "tweet_author_handle";
+    private static final String TweetAuthorNameAttr = "tweet_author_name";
+    private static final String TweetAuthorPhoto = "tweet_author_photo";
+
+    // Tweet table information
     private static final String TableName = "tweet";
-    private static final String TweetTableIndex = "tweet-index-by-message";
     private static final String HandleAttr = "user_handle";
     private static final String TimestampAttr = "timestamp";
     private static final String AttachmentAttr = "attachment";
@@ -26,11 +35,22 @@ public class TweetDAO extends GeneralDAO {
     private static final String NameAttr = "user_name";
     private static final String PhotoAttr = "user_photo";
 
-    private String timestamp =  new SimpleDateFormat("yyyyMMdd'T'HHmm'Z'").format(new Date());
+    private String timestamp =  new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'").format(new Date());
 
     public TweetPostResult postTweet(TweetPostRequest request) {
+
+        /*
+          The flow is:
+          1. Add to the tweet table
+          2. Get list of followers back from follows table
+          3. Append each follower_handle to the feed table with the tweet information
+         */
+
+        // Step 1
         Table table = dynamoDB.getTable(TableName);
         TweetPostResult result = new TweetPostResult();
+        UserDAO userDAO = new UserDAO();
+        FeedDAO feedDAO = new FeedDAO();
 
         try {
             Item item = new Item()
@@ -48,6 +68,30 @@ public class TweetDAO extends GeneralDAO {
             System.out.println("Could not add item to DB:" + e.toString());
             result.setSuccess(false);
         }
+         // Step 2 - get followers
+        FollowersResult followersResult = userDAO.getFollowers(request.tweetDTO.userHandle, 25, "");
+
+        // Step 3 - Append to feed
+        if (followersResult != null) {
+            for (UserDTO user : followersResult.followers) {
+                // Build request
+                AddToFeedRequest addToFeedRequest = new AddToFeedRequest();
+                addToFeedRequest.user_handle = user.getUserHandle();
+                addToFeedRequest.tweet_author_handle = request.tweetDTO.userHandle;
+                addToFeedRequest.tweet_author_name = request.tweetDTO.userName;
+                addToFeedRequest.tweet_author_photo = request.tweetDTO.userPhoto;
+                addToFeedRequest.message = request.tweetDTO.message;
+                if (request.tweetDTO.attachment != null)
+                    addToFeedRequest.attachment = request.tweetDTO.attachment;
+                else
+                    addToFeedRequest.attachment = "null";
+                addToFeedRequest.timestamp = request.tweetDTO.timestamp;
+
+                // Add to feed
+                feedDAO.addToFeed(addToFeedRequest);
+            }
+        }
+
         return result;
     }
 
@@ -100,6 +144,7 @@ public class TweetDAO extends GeneralDAO {
     }
 
     public HashtagResult getHashtag(String hashtag, int pageSize, String lastResult) {
+        hashtag = "#"+hashtag;
         Map<String, AttributeValue> lastKeyEvaluated = null;
         HashtagResult result = new HashtagResult();
 

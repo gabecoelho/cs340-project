@@ -185,11 +185,11 @@ public class UserDAO extends GeneralDAO {
                 .withLimit(pageSize);
 
         if (isNonEmptyString(lastResult)) {
-            Map<String, AttributeValue> lastKey = new HashMap<>();
-            lastKey.put(FollowerHandleAttr, new AttributeValue().withS(handle));
-            lastKey.put(FolloweeHandleAttr, new AttributeValue().withS(lastResult));
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(FollowerHandleAttr, new AttributeValue().withS(handle));
+            startKey.put(FolloweeHandleAttr, new AttributeValue().withS(lastResult));
 
-            queryRequest = queryRequest.withExclusiveStartKey(lastKey);
+            queryRequest = queryRequest.withExclusiveStartKey(startKey);
         }
 
         QueryResult queryResult = amazonDynamoDB.query(queryRequest);

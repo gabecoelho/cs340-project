@@ -1,4 +1,4 @@
-package lambdas;
+package lambdas.services;
 
-public class Services {
+public class UserService {
 }
