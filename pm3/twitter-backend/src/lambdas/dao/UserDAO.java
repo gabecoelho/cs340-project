@@ -19,7 +19,6 @@ import lambdas.following.FollowingResult;
 import lambdas.follows.FollowsResult;
 import lambdas.signup.SignupRequest;
 import lambdas.signup.SignupResult;
-import lambdas.tweetPoster.TweetPostResult;
 import lambdas.unfollow.UnfollowRequest;
 import lambdas.unfollow.UnfollowResult;
 import lambdas.user.UserResult;
@@ -42,10 +41,8 @@ public class UserDAO extends GeneralDAO {
     private static final String FollowIndexName = "follow-index";
     private static final String FollowerHandleAttr = "follower_handle";
     private static final String FollowerNameAttr = "follower_name";
-    private static final String FollowerPhotoAttr = "follower_photo";
     private static final String FolloweeHandleAttr = "followee_handle";
     private static final String FolloweeNameAttr = "followee_name";
-    private static final String FolloweePhotoAttr = "followee_photo";
 
     // S3
     private static final String bucketName = "340-twitter-bucket";
