@@ -1,6 +1,5 @@
 package lambdas.followers;
 
-import lambdas.dto.TweetDTO;
 import lambdas.dto.UserDTO;
 
 import java.util.ArrayList;
@@ -8,7 +7,7 @@ import java.util.List;
 
 public class FollowersResult {
     public List<UserDTO> followers = new ArrayList<>();
-    public  String lastKey;
+    public String lastKey;
 
     public List<UserDTO> getFollowers() {
         return followers;

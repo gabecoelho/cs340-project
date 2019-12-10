@@ -13,19 +13,19 @@ String postTweetResultToJson(PostTweetResult data) =>
     json.encode(data.toJson());
 
 class PostTweetResult {
-  Tweet tweet;
+  String success;
 
   PostTweetResult({
-    this.tweet,
+    this.success,
   });
 
   factory PostTweetResult.fromJson(Map<String, dynamic> json) =>
       PostTweetResult(
-        tweet: Tweet.fromJson(json["tweet"]),
+        success: (json["tweet"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "tweet": tweet.toJson(),
+        "success": success,
       };
 }
 

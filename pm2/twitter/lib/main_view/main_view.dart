@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:twitter/home/home_view.dart';
+import 'package:twitter/model/authenticated_user.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/settings_view/settings_view.dart';
 import 'package:twitter/user_profile/user_profile_view.dart';
@@ -15,12 +16,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int currentIndex = 0;
 
-  static User currentUser = User(
-    name: "John Doe",
-    handle: "@johndoe",
-    picture:
-        "/Users/palmacoe/byu/cs340/cs340-project/pm2/twitter/lib/assets/placeholder.png",
-  );
+  static User currentUser = AuthenticatedUserSingleton().authenticatedUser.user;
 
   final List<Widget> _views = [
     HomeView(),

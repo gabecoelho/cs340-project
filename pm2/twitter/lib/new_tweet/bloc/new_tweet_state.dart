@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:twitter/model/tweet.dart';
 
 abstract class NewTweetState extends Equatable {
   NewTweetState([List props = const <dynamic>[]]);
@@ -18,4 +19,8 @@ class AttachmentAddedNewTweetState extends NewTweetState {
 
   @override
   List<Object> get props => [image];
+}
+
+class TweetSentNewTweetState extends NewTweetState {
+  TweetSentNewTweetState();
 }

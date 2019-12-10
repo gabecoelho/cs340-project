@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,20 +33,21 @@ class _ProfileViewState extends State<ProfileView> {
         ProfilePictureChangedEvent(image: image),
       );
     }
+    List<int> imageBytes = image.readAsBytesSync();
+    _formData['picture'] = base64Encode(imageBytes);
   }
 
   Map<String, dynamic> _formData;
 
   @override
   void initState() {
-    print(widget._formData['password']);
     _formData = {
       'email': widget._formData['email'],
       'password': widget._formData['password'],
       'handle': widget._formData['handle'],
       'first_name': '',
       'last_name': '',
-      // 'picture': '',
+      'picture': '',
     };
     super.initState();
   }
@@ -169,7 +172,6 @@ class _ProfileViewState extends State<ProfileView> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
       child: TextFormField(
-        // validator:
         decoration: InputDecoration(
             hintText: "First Name",
             hintStyle: TextStyle(color: Colors.lightBlue),
@@ -212,13 +214,13 @@ class _ProfileViewState extends State<ProfileView> {
       onTap: () async {
         if (_formKey.currentState.validate()) {
           _formKey.currentState.save();
-          print(_formData.toString());
           profileBloc.add(
             ProfileSubmitPressedEvent(
               email: _formData['email'],
               password: _formData['password'],
               name: _formData['first_name'] + " " + _formData['last_name'],
               handle: _formData['handle'],
+              base64EncodedString: _formData['picture'],
             ),
           );
         }

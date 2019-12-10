@@ -13,12 +13,9 @@ class FollowResult {
   String follower;
   String following;
   bool follows;
+  String lastKey;
 
-  FollowResult({
-    this.follower,
-    this.following,
-    this.follows,
-  });
+  FollowResult({this.follower, this.following, this.follows, this.lastKey});
 
   factory FollowResult.fromJson(Map<String, dynamic> json) => FollowResult(
         follower: json["follower"],

@@ -1,30 +1,35 @@
 class Tweet {
   String handle;
+  String name;
   String message;
   String picture;
   String attachment;
-  DateTime timestamp;
+  //DateTime timestamp;
+  String timestamp;
 
   Tweet(
       {this.handle,
       this.message,
+      this.name,
       this.picture,
       this.attachment,
       this.timestamp});
 
   factory Tweet.fromJson(Map<String, dynamic> json) => Tweet(
-        handle: json["handle"],
+        handle: json["userHandle"],
+        name: json["userName"],
         message: json["message"],
-        picture: json["picture"],
+        picture: json["userPhoto"],
         attachment: json["attachment"],
-        timestamp: DateTime.parse(json["timestamp"]),
+        timestamp: (json["timestamp"]),
       );
 
   Map<String, dynamic> toJson() => {
         "handle": handle,
+        "name": name,
         "message": message,
         "picture": picture,
         "attachment": attachment,
-        "timestamp": timestamp.toIso8601String(),
+        "timestamp": timestamp,
       };
 }

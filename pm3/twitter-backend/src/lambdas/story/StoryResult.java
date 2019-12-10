@@ -13,9 +13,6 @@ public class StoryResult {
     public List<TweetDTO> getStory() {
         return story;
     }
-    public void setStory(List<TweetDTO> story) {
-        this.story = story;
-    }
     public String getLastKey() {
         return lastKey;
     }

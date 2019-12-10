@@ -15,19 +15,19 @@ String followingResultToJson(FollowingResult data) =>
 
 class FollowingResult extends GeneralResult {
   List<User> following;
+  String lastKey;
 
-  FollowingResult({
-    this.following,
-  });
+  FollowingResult({this.following, this.lastKey});
 
   factory FollowingResult.fromJson(Map<String, dynamic> json) =>
       FollowingResult(
-        following:
-            List<User>.from(json["following"].map((x) => User.fromJson(x))),
-      );
+          following:
+              List<User>.from(json["following"].map((x) => User.fromJson(x))),
+          lastKey: json["lastKey"]);
 
   Map<String, dynamic> toJson() => {
         "following": List<dynamic>.from(following.map((x) => x.toJson())),
+        "lastKey": lastKey
       };
 
   @override

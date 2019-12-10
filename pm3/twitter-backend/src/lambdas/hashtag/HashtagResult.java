@@ -7,7 +7,6 @@ import java.util.Set;
 
 public class HashtagResult {
     public Set<TweetDTO> hashtags = new HashSet<>();
-
     public  String lastKey;
 
     public Set<TweetDTO> getHashtags() {

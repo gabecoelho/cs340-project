@@ -1,32 +1,35 @@
 //any other user
+import 'package:amazon_cognito_identity_dart/cognito.dart';
+import 'package:twitter/facade/service_facade.dart';
 import 'package:twitter/model/tweet.dart';
 import 'package:twitter/model/user.dart';
 
-class AuthenticatedUser {
-  User user = User(
-      name: "Test",
-      handle: "@test",
-      picture:
-          "https://www.brownweinraub.com/wp-content/uploads/2017/09/placeholder.jpg");
+class UserModel {
+  User user = User();
   List<Tweet> feed = [];
   List<Tweet> story = [];
+  List<Tweet> hashtags = [];
   List<User> followers = [];
   List<User> following = [];
-
-  List<Tweet> hashtags = [];
+  String feedLastKey = "";
+  String storyLastKey = "";
+  String followersLastKey = "";
+  String followingLastKey = "";
+  String hashtagsLastKey = "";
 }
 
 //Authenticated User Singleton
-class UserModelSingleton {
-  AuthenticatedUser userModel;
+class AuthenticatedUserSingleton {
+  UserModel authenticatedUser;
 
-  static final UserModelSingleton _instance = UserModelSingleton._internal();
+  static final AuthenticatedUserSingleton _instance =
+      AuthenticatedUserSingleton._internal();
 
-  factory UserModelSingleton() {
+  factory AuthenticatedUserSingleton() {
     return _instance;
   }
 
-  UserModelSingleton._internal() {
-    userModel = AuthenticatedUser();
+  AuthenticatedUserSingleton._internal() {
+    authenticatedUser = UserModel();
   }
 }
