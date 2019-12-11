@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class UserProfileState extends Equatable {
   const UserProfileState();
-}
 
-class InitialUserProfileState extends UserProfileState {
-  @override
   List<Object> get props => [];
 }
+
+class InitialUserProfileState extends UserProfileState {}

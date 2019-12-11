@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +14,7 @@ import 'package:twitter/services/strategy/fetch_following_strategy.dart';
 import 'package:twitter/services/strategy/fetch_list_strategy.dart';
 import 'package:twitter/services/strategy/fetch_story_strategy.dart';
 import 'package:twitter/user_follow_view/user_follow_view.dart';
+import 'package:twitter/user_profile/bloc/user_profile_event.dart';
 import 'package:twitter/widgets/twitter_list_view/twitter_list_view.dart';
 
 class UserProfileView extends StatefulWidget {
@@ -26,6 +29,8 @@ class UserProfileView extends StatefulWidget {
 
 class _UserProfileViewState extends State<UserProfileView> {
   AuthenticatedUserSingleton userModelSingleton = AuthenticatedUserSingleton();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Map<String, dynamic> _formData;
 
   void changeProfileImage(
       ImageSource imageSource, ProfileBloc profileBloc) async {
@@ -36,6 +41,20 @@ class _UserProfileViewState extends State<UserProfileView> {
         ProfilePictureChangedEvent(image: image),
       );
     }
+    List<int> imageBytes = image.readAsBytesSync();
+    _formData['picture'] = base64Encode(imageBytes);
+
+    profileBloc.add(UserProfileChangedPictureEvent(
+        base64EncodedString: _formData['picture'],
+        handle: userModelSingleton.authenticatedUser.user.handle));
+  }
+
+  @override
+  void initState() {
+    _formData = {
+      'picture': '',
+    };
+    super.initState();
   }
 
   @override
@@ -116,7 +135,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                 MaterialPageRoute(
                   builder: (context) => UserFollowView(
                     fetchListStrategy: FetchFollowersStrategy(),
-                    user: user,
+                    user: widget.user,
                   ),
                 ),
               );
@@ -135,7 +154,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => UserFollowView(
-                      fetchListStrategy: FetchFollowingStrategy(), user: user),
+                      fetchListStrategy: FetchFollowingStrategy(),
+                      user: widget.user),
                 ),
               );
             },

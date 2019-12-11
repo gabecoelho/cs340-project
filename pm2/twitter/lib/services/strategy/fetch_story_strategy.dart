@@ -15,16 +15,8 @@ class FetchStoryStrategy implements FetchListStrategy {
     // MockTweetList mockTweetList = MockTweetList();
     // return await mockTweetList.getStory();
 
-    print(authenticatedUserSingleton.authenticatedUser.storyLastKey);
-
     final result = await serviceFacade.getStory(user.handle, 10,
         authenticatedUserSingleton.authenticatedUser.storyLastKey);
-
-    try {
-      print(result.lastKey);
-    } catch (e) {
-      e.toString();
-    }
 
     authenticatedUserSingleton.authenticatedUser.storyLastKey = result.lastKey;
 

@@ -14,8 +14,6 @@ class FetchFeedStrategy implements FetchListStrategy {
     // MockTweetList mockTweetList = MockTweetList();
     // return await mockTweetList.getFeed();
 
-    print(authenticatedUserSingleton.authenticatedUser.feedLastKey);
-
     final result = await serviceFacade.getFeed(user.handle, 10,
         authenticatedUserSingleton.authenticatedUser.feedLastKey);
 

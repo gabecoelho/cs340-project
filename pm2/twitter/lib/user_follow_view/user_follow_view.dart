@@ -24,14 +24,15 @@ class UserFollowView extends StatelessWidget {
                   user: user,
                 )
               : TwitterListView<User>(
-                  fetchListStrategy: FetchFollowersStrategy(), user: user),
+                  fetchListStrategy: FetchFollowersStrategy(),
+                  user: user,
+                ),
         ),
       ),
     );
   }
 
   Widget _buildAppBar(BuildContext context) {
-    print("user handle in user follow view: " + user.handle);
     return AppBar(
       automaticallyImplyLeading: true,
       leading: IconButton(
