@@ -1,6 +1,5 @@
 package lambdas.dao;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
@@ -28,7 +27,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class UserDAO extends GeneralDAO {
+public class UserDAO extends GeneralDAO implements IUserDAO {
 
     // User table
     private static final String UserTableName = "user";
@@ -46,9 +45,6 @@ public class UserDAO extends GeneralDAO {
 
     // S3
     private static final String bucketName = "340-twitter-bucket";
-
-    ClientConfiguration configuration = new ClientConfiguration();
-
 
     AmazonS3 s3 = AmazonS3ClientBuilder
             .standard()
@@ -182,11 +178,11 @@ public class UserDAO extends GeneralDAO {
                 .withLimit(pageSize);
 
         if (isNonEmptyString(lastResult)) {
-            Map<String, AttributeValue> startKey = new HashMap<>();
-            startKey.put(FollowerHandleAttr, new AttributeValue().withS(handle));
-            startKey.put(FolloweeHandleAttr, new AttributeValue().withS(lastResult));
+            Map<String, AttributeValue> lastKey = new HashMap<>();
+            lastKey.put(FollowerHandleAttr, new AttributeValue().withS(handle));
+            lastKey.put(FolloweeHandleAttr, new AttributeValue().withS(lastResult));
 
-            queryRequest = queryRequest.withExclusiveStartKey(startKey);
+            queryRequest = queryRequest.withExclusiveStartKey(lastKey);
         }
 
         QueryResult queryResult = amazonDynamoDB.query(queryRequest);

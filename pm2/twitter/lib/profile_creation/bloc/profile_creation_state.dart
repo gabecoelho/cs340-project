@@ -26,4 +26,13 @@ class ProfilePictureChangedState extends ProfileState {
   List<Object> get props => [image];
 }
 
+// From User_Profile_View
+class UserProfilePictureChangedState extends ProfileState {
+  final String newImageUrl;
+
+  UserProfilePictureChangedState({@required this.newImageUrl});
+
+  List<Object> get props => [newImageUrl];
+}
+
 class ProfileSubmitState extends ProfileState {}

@@ -23,7 +23,7 @@ class StoryResult extends GeneralResult {
       lastKey: json["lastKey"]);
 
   Map<String, dynamic> toJson() => {
-        "story": List<dynamic>.from(story.map((x) => x.toJson())),
+        "story": List<Tweet>.from(story.map((x) => x.toJson())),
         "lastKey": lastKey
       };
 

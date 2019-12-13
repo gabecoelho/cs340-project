@@ -38,3 +38,15 @@ class ProfilePictureChangedEvent extends ProfileEvent {
   @override
   List<Object> get props => [image];
 }
+
+// From User_Profile_View
+class UserProfileChangedPictureEvent extends ProfileEvent {
+  final String base64EncodedString;
+  final String handle;
+
+  UserProfileChangedPictureEvent(
+      {@required this.handle, this.base64EncodedString});
+
+  @override
+  List<Object> get props => [handle, base64EncodedString];
+}

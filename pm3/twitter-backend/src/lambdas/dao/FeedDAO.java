@@ -1,20 +1,23 @@
 package lambdas.dao;
 
+import com.amazonaws.services.dynamodbv2.document.BatchWriteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.TableWriteItems;
 import com.amazonaws.services.dynamodbv2.model.*;
-import lambdas.dto.FeedDTO;
 import lambdas.dto.TweetDTO;
+import lambdas.dto.UserDTO;
 import lambdas.feed.AddToFeedRequest;
 import lambdas.feed.FeedResult;
+import lambdas.tweetPoster.TweetPostRequest;
 import lambdas.tweetPoster.TweetPostResult;
 
-import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FeedDAO extends GeneralDAO {
+public class FeedDAO extends GeneralDAO implements IFeedDAO {
 
     private static final String TableName = "feed";
     private static final String AttachmentAttr = "attachment";
@@ -25,6 +28,7 @@ public class FeedDAO extends GeneralDAO {
     private static final String TweetAuthorPhoto = "tweet_author_photo";
     private static final String HandleAttr = "user_handle";
 
+    @Override
     public FeedResult getFeed(String handle, int pageSize, String lastResult) {
         // TODO: Sort the tweets by timestamp here or in client
 
@@ -75,22 +79,74 @@ public class FeedDAO extends GeneralDAO {
         return result;
     }
 
-    public void addToFeed(AddToFeedRequest request) {
-        Table table = dynamoDB.getTable(TableName);
-        try {
-            Item item = new Item()
-                    .withPrimaryKey(HandleAttr, request.user_handle)
-                    .withString(TimestampAttr, request.timestamp)
-                    .withString(MessageAttr, request.message)
-                    .withString(TweetAuthorHandleAttr, request.tweet_author_handle)
-                    .withString(TweetAuthorNameAttr, request.tweet_author_name)
-                    .withString(TweetAuthorPhoto, request.tweet_author_photo)
-                    .withString(AttachmentAttr, request.attachment);
+//    @Override
+//    public void addToFeed(AddToFeedRequest request) {
+//        Table table = dynamoDB.getTable(TableName);
+//        try {
+//            Item item = new Item()
+//                    .withPrimaryKey(HandleAttr, request.user_handle)
+//                    .withString(TimestampAttr, request.timestamp)
+//                    .withString(MessageAttr, request.message)
+//                    .withString(TweetAuthorHandleAttr, request.tweet_author_handle)
+//                    .withString(TweetAuthorNameAttr, request.tweet_author_name)
+//                    .withString(TweetAuthorPhoto, request.tweet_author_photo)
+//                    .withString(AttachmentAttr, request.attachment);
+//
+//            table.putItem(item);
+//        }
+//        catch (Exception e) {
+//            System.out.println("Could not add item to DB:" + e.toString());
+//        }
+//    }
 
-            table.putItem(item);
+    @Override
+    public void batchWriteToFeed(TweetPostRequest request, List<String> followersList) {
+
+        try {
+            for (int i = 0; i < followersList.size(); i++) {
+                int start = i;
+                int end = Math.min(start + 25, followersList.size());
+                List<String> followersSublist = followersList.subList(start, end);
+
+                batchWrite(followersSublist, request);
+
+                i = end;
+            }
         }
         catch (Exception e) {
-            System.out.println("Could not add item to DB:" + e.toString());
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+    }
+
+    private void batchWrite(List<String> followersSublist, TweetPostRequest request) {
+        List<Item> itemList = new ArrayList<>();
+        TableWriteItems tableWriteItems = new TableWriteItems(TableName);
+
+        for (String handle : followersSublist) {
+            Item item = new Item()
+                    .withPrimaryKey(HandleAttr, handle)
+                    .withString(TimestampAttr, request.tweetDTO.getTimestamp())
+                    .withString(MessageAttr, request.tweetDTO.getMessage())
+                    .withString(TweetAuthorHandleAttr, request.tweetDTO.getUserHandle())
+                    .withString(TweetAuthorNameAttr, request.tweetDTO.getUserName())
+                    .withString(TweetAuthorPhoto, request.tweetDTO.getUserPhoto())
+                    .withString(AttachmentAttr, request.tweetDTO.getAttachment());
+            itemList.add(item);
+        }
+        tableWriteItems.withItemsToPut(itemList);
+        BatchWriteItemOutcome outcome = dynamoDB.batchWriteItem(tableWriteItems);
+        System.out.println("Finished a batch write");
+
+        while (outcome.getUnprocessedItems().size() > 0) {
+            outcome = dynamoDB.batchWriteItemUnprocessed(outcome.getUnprocessedItems());
+            System.out.println(outcome.toString());
+            try {
+                Thread.sleep(1000);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

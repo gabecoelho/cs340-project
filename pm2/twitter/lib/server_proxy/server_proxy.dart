@@ -27,6 +27,7 @@ class ServerProxy {
   final user = new User();
   final AuthenticatedUserSingleton userSingleton = AuthenticatedUserSingleton();
   RegExp regex = new RegExp(r'(?:\\.|[^"\\])*');
+  RegExp hashtagRegex = new RegExp(r'([^#])+');
 
   Future<User> signUp(String email, String password, String name, String handle,
       String base64EncodedString) async {
@@ -105,6 +106,8 @@ class ServerProxy {
       "Content-type": "application/json",
       "Accept": "application/json"
     };
+
+    hashtag = hashtagRegex.stringMatch(hashtag);
 
     final String reqUrl =
         "$baseUrl/status/hashtag/$hashtag?pageSize=$pageSize&lastKey=$lastKey";
