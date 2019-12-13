@@ -14,17 +14,12 @@ import lambdas.dto.UserDTO;
 import lambdas.feed.AddToFeedRequest;
 import lambdas.followers.FollowersResult;
 import lambdas.hashtag.HashtagResult;
+import lambdas.services.SQSFeedService;
 import lambdas.story.StoryResult;
 import lambdas.tweetPoster.TweetPostRequest;
 import lambdas.tweetPoster.TweetPostResult;
 
-public class TweetDAO extends GeneralDAO {
-
-    // Feed table information
-    private static final String FeedTableName = "feed";
-    private static final String TweetAuthorHandleAttr = "tweet_author_handle";
-    private static final String TweetAuthorNameAttr = "tweet_author_name";
-    private static final String TweetAuthorPhoto = "tweet_author_photo";
+public class TweetDAO extends GeneralDAO implements ITweetDAO {
 
     // Tweet table information
     private static final String TableName = "tweet";
@@ -37,20 +32,20 @@ public class TweetDAO extends GeneralDAO {
 
     private String timestamp =  new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'").format(new Date());
 
+    SQSFeedService sqsFeedService = new SQSFeedService();
+
     public TweetPostResult postTweet(TweetPostRequest request) {
 
-        /*
-          The flow is:
-          1. Add to the tweet table
-          2. Get list of followers back from follows table
-          3. Append each follower_handle to the feed table with the tweet information
-         */
+        sqsFeedService.postTweetToFirstSQS(request);
+        TweetPostResult result = new TweetPostResult();
+        result.setSuccess(true);
 
-        // Step 1
+        return result;
+    }
+
+    public TweetPostResult writeToTweet(TweetPostRequest request) {
         Table table = dynamoDB.getTable(TableName);
         TweetPostResult result = new TweetPostResult();
-        UserDAO userDAO = new UserDAO();
-        FeedDAO feedDAO = new FeedDAO();
 
         try {
             Item item = new Item()
@@ -68,30 +63,6 @@ public class TweetDAO extends GeneralDAO {
             System.out.println("Could not add item to DB:" + e.toString());
             result.setSuccess(false);
         }
-         // Step 2 - get followers
-        FollowersResult followersResult = userDAO.getFollowers(request.tweetDTO.userHandle, 25, "");
-
-        // Step 3 - Append to feed
-        if (followersResult != null) {
-            for (UserDTO user : followersResult.followers) {
-                // Build request
-                AddToFeedRequest addToFeedRequest = new AddToFeedRequest();
-                addToFeedRequest.user_handle = user.getUserHandle();
-                addToFeedRequest.tweet_author_handle = request.tweetDTO.userHandle;
-                addToFeedRequest.tweet_author_name = request.tweetDTO.userName;
-                addToFeedRequest.tweet_author_photo = request.tweetDTO.userPhoto;
-                addToFeedRequest.message = request.tweetDTO.message;
-                if (request.tweetDTO.attachment != null)
-                    addToFeedRequest.attachment = request.tweetDTO.attachment;
-                else
-                    addToFeedRequest.attachment = "null";
-                addToFeedRequest.timestamp = request.tweetDTO.timestamp;
-
-                // Add to feed
-                feedDAO.addToFeed(addToFeedRequest);
-            }
-        }
-
         return result;
     }
 
