@@ -44,25 +44,6 @@ public class SQSFeedService implements IFeedService {
         String msgId = sendMessageResult.getMessageId();
         System.out.println("2nd Queue: Message ID: " + msgId);
 
-//        String serializedRequestMessage = gson.toJson(request);
-//
-//        System.out.println("serialized message: " + serializedRequestMessage);
-//
-//        SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry(id, serializedRequestMessage);
-//
-//        SendMessageBatchRequest sendMessageBatchRequest = new SendMessageBatchRequest()
-//                .withQueueUrl(secondQueueUrl)
-//                .withEntries(entry);
-//
-//        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(sendMessageBatchRequest);
-//
-//        List<SendMessageBatchResultEntry> successfulMessages = sendMessageBatchResult.getSuccessful();
-//
-//        for (SendMessageBatchResultEntry successfulEntry : successfulMessages) {
-//           String msgId = successfulEntry.getMessageId();
-//            System.out.println("2nd Queue: Message ID is " + msgId);
-//        }
-
     }
 
 }
